@@ -19,7 +19,8 @@ public class FileWorkingUtils {
             postbackURLWriter = new FileWriter("/postback/postback.url", true);
             errorPostbackURLWriter = new FileWriter("/postback/postback.url", true);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.debug("Exception during initializing fileWriters");
+            logger.debug(e.getMessage());
         }
     }
 

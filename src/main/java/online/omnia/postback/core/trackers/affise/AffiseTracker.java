@@ -3,6 +3,7 @@ package online.omnia.postback.core.trackers.affise;
 import online.omnia.postback.core.exceptions.NoClickIdException;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
 import online.omnia.postback.core.utils.HttpMethodsUtils;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 public class AffiseTracker {
     private String baseUrl;
     private Map<String, String> headers;
+    final static Logger logger = Logger.getLogger(AffiseTracker.class);
 
     public AffiseTracker() {
         baseUrl = "https://offers.omnia.online/";
@@ -22,16 +24,15 @@ public class AffiseTracker {
 
     public void sendPostback(PostBackEntity postBackEntity) throws NoClickIdException {
         String url = buildUrl(postBackEntity);
-        try {
-            String answer = HttpMethodsUtils.getMethod(url, headers);
-            //ToDo
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        String answer = HttpMethodsUtils.getMethod(url, headers);
+        //ToDo
+
     }
 
     private String buildUrl(PostBackEntity postBackEntity) throws NoClickIdException {
-        if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty()) throw new NoClickIdException();
+        if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
+            throw new NoClickIdException();
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "postback?clickid=" + postBackEntity.getClickId());
         if (postBackEntity.getGoal() != 0) urlBuilder.append("&goal=").append(postBackEntity.getGoal());
         else urlBuilder.append("&goal=1");

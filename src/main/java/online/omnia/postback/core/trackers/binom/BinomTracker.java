@@ -3,6 +3,7 @@ package online.omnia.postback.core.trackers.binom;
 import online.omnia.postback.core.exceptions.NoClickIdException;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
 import online.omnia.postback.core.utils.HttpMethodsUtils;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 public class BinomTracker {
     private String baseUrl;
     private Map<String, String> headers;
+    final static Logger logger = Logger.getLogger(BinomTracker.class);
 
     public BinomTracker(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -22,11 +24,9 @@ public class BinomTracker {
 
     public void sendPostback(PostBackEntity postBackEntity) throws NoClickIdException {
         String url = buildUrl(postBackEntity);
-        try {
-            String answer = HttpMethodsUtils.getMethod(url, headers);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        String answer = HttpMethodsUtils.getMethod(url, headers);
+
     }
 
     private String buildUrl(PostBackEntity postBackEntity) throws NoClickIdException {
