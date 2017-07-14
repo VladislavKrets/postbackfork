@@ -32,6 +32,8 @@ public class PostBackEntity {
     private String currency;
     @Column(name = "goal")
     private int goal;
+    @Column(name = "afid")
+    private String afid;
     @Column(name = "status")
     private int status;
     @Column(name = "advname", length = 100)
@@ -77,7 +79,7 @@ public class PostBackEntity {
     }
 
     public PostBackEntity(String id, Date date, Time time, String clickId, double sum, String currency,
-                          int goal, int status, String advName, String offerName, String transactionId,
+                          int goal, String afid, int status, String advName, String offerName, String transactionId,
                           String IDFA, String gaId, String t1, String t2, String t3, String t4, String t5,
                           String t6, String t7, String t8, String t9, String t10, String secretKey,
                           String ipAddress, String fullURL, int postbackSend) {
@@ -88,6 +90,7 @@ public class PostBackEntity {
         this.sum = sum;
         this.currency = currency;
         this.goal = goal;
+        this.afid = afid;
         this.status = status;
         this.advName = advName;
         this.offerName = offerName;
@@ -216,5 +219,121 @@ public class PostBackEntity {
 
     public int getPostbackSend() {
         return postbackSend;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
+    }
+
+    public void setClickId(String clickId) {
+        this.clickId = clickId;
+    }
+
+    public void setSum(double sum) {
+        this.sum = sum;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public void setGoal(int goal) {
+        this.goal = goal;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setAdvName(String advName) {
+        this.advName = advName;
+    }
+
+    public void setOfferName(String offerName) {
+        this.offerName = offerName;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public void setIDFA(String IDFA) {
+        this.IDFA = IDFA;
+    }
+
+    public void setGaId(String gaId) {
+        GaId = gaId;
+    }
+
+    public void setT1(String t1) {
+        this.t1 = t1;
+    }
+
+    public void setT2(String t2) {
+        this.t2 = t2;
+    }
+
+    public void setT3(String t3) {
+        this.t3 = t3;
+    }
+
+    public void setT4(String t4) {
+        this.t4 = t4;
+    }
+
+    public void setT5(String t5) {
+        this.t5 = t5;
+    }
+
+    public void setT6(String t6) {
+        this.t6 = t6;
+    }
+
+    public void setT7(String t7) {
+        this.t7 = t7;
+    }
+
+    public void setT8(String t8) {
+        this.t8 = t8;
+    }
+
+    public void setT9(String t9) {
+        this.t9 = t9;
+    }
+
+    public void setT10(String t10) {
+        this.t10 = t10;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public void setFullURL(String fullURL) {
+        this.fullURL = fullURL;
+    }
+
+    public void setPostbackSend(int postbackSend) {
+        this.postbackSend = postbackSend;
+    }
+
+    public String getAfid() {
+        return afid;
+    }
+
+    public void setAfid(String afid) {
+        this.afid = afid;
     }
 }

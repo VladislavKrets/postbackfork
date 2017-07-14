@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Created by lollipop on 12.07.2017.
@@ -24,8 +26,8 @@ public class FileWorkingUtils {
         }
     }
 
-    public static void writePostback(PostBackEntity postBackEntity){
-        String line = buildLine(postBackEntity);
+    public static void writePostback(Date date, Time time, String fullUrl){
+        String line = buildLine(date, time, fullUrl);
         try {
             postbackURLWriter.write(line);
             postbackURLWriter.flush();
@@ -34,8 +36,8 @@ public class FileWorkingUtils {
         }
     }
 
-    public static void writeErrorPostback(PostBackEntity postBackEntity) {
-        String line = buildLine(postBackEntity);
+    public static void writeErrorPostback(Date date, Time time, String fullUrl) {
+        String line = buildLine(date, time, fullUrl);
         try {
             errorPostbackURLWriter.write(line);
             errorPostbackURLWriter.flush();
@@ -43,13 +45,13 @@ public class FileWorkingUtils {
             logger.debug(e.getMessage());
         }
     }
-    private static String buildLine(PostBackEntity postBackEntity) {
+    private static String buildLine(Date date, Time time, String fullUrl) {
         StringBuilder lineBuilder = new StringBuilder();
-        lineBuilder.append(postBackEntity.getDate().toString())
+        lineBuilder.append(date.toString())
                 .append(" ")
-                .append(postBackEntity.getTime().toString())
+                .append(time.toString())
                 .append(" ")
-                .append(postBackEntity.getFullURL())
+                .append(fullUrl)
                 .append("\n");
         return lineBuilder.toString();
     }
