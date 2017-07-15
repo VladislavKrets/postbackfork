@@ -1,18 +1,21 @@
 package online.omnia.postback.core.dao;
 
+import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
-import online.omnia.postback.core.trackers.entities.RoutingPostbackEntity;
+import online.omnia.postback.core.trackers.entities.AdvertsEntity;
 import online.omnia.postback.core.trackers.entities.TrackerEntity;
+import online.omnia.postback.core.utils.FileWorkingUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lollipop on 12.07.2017.
  */
-public class MySQLDaoImpl implements MySQLDao{
+public class MySQLDaoImpl implements MySQLDao {
     private static Configuration configuration;
     private static SessionFactory sessionFactory;
     private static MySQLDaoImpl instance;
@@ -20,13 +23,18 @@ public class MySQLDaoImpl implements MySQLDao{
     static {
         configuration = new Configuration()
                 .addAnnotatedClass(PostBackEntity.class)
-                .addAnnotatedClass(RoutingPostbackEntity.class)
+                .addAnnotatedClass(AdvertsEntity.class)
                 .addAnnotatedClass(TrackerEntity.class)
-                .configure();
+                .configure("hibernate.cfg.xml");
+        Map<String, String> properties = FileWorkingUtils.iniFileReader();
+        configuration.setProperty("hibernate.connection.password", properties.get("password"));
+        configuration.setProperty("hibernate.connection.username", properties.get("username"));
+
         sessionFactory = configuration.buildSessionFactory();
     }
 
-    private MySQLDaoImpl() {}
+    private MySQLDaoImpl() {
+    }
 
     @Override
     public void addPostback(PostBackEntity postBackEntity) {
@@ -38,21 +46,30 @@ public class MySQLDaoImpl implements MySQLDao{
     }
 
     @Override
-    public List<RoutingPostbackEntity> getAllRoutingPostbacks() {
+    public List<AdvertsEntity> getAllAdverts() {
         Session session = sessionFactory.openSession();
-        List<RoutingPostbackEntity> routingPostbackEntityList
-                = session.createQuery("from RoutingPostbackEntity", RoutingPostbackEntity.class).getResultList();
+        List<AdvertsEntity> advertsEntityList
+                = session.createQuery("from Adverts", AdvertsEntity.class).getResultList();
         session.close();
-        return routingPostbackEntityList;
+        return advertsEntityList;
     }
 
     @Override
-    public List<TrackerEntity> getBinomTrackers() {
+    public List<TrackerEntity> getTrackers() {
         Session session = sessionFactory.openSession();
         List<TrackerEntity> trackerEntityList =
                 session.createQuery("from TrackerEntity", TrackerEntity.class).getResultList();
         session.close();
         return trackerEntityList;
+    }
+
+    @Override
+    public List<AffiliatesEntity> getAffiliates() {
+        Session session = sessionFactory.openSession();
+        List<AffiliatesEntity> affiliates =
+                session.createQuery("from AffiliatesEntity", AffiliatesEntity.class).getResultList();
+        session.close();
+        return affiliates;
     }
 
     public static SessionFactory getSessionFactory() {

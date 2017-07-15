@@ -12,22 +12,22 @@ import javax.persistence.Table;
 @Entity
 public class TrackerEntity {
     @Id
-    @Column(name = "id")
-    private int id;
-    @Column(name = "name", length = 20)
+    @Column(name = "prefix")
+    private int prefix;
+    @Column(name = "name", length = 50)
     private String name;
     @Column(name = "domain", length = 100)
     private String domain;
     @Column(name = "ip", length = 20)
     private String ip;
-    @Column(name = "module_name", length = 50)
+    @Column(name = "modulename", length = 50)
     private String moduleName;
 
     public TrackerEntity() {
     }
 
-    public int getId() {
-        return id;
+    public int getPrefix() {
+        return prefix;
     }
 
     public String getName() {

@@ -24,6 +24,9 @@ public class PostBackEntity {
     @Column(name = "time")
     @Type(type = "TIME")
     private Time time;
+    @Column(name = "prefix")
+    @Type(type = "TINYINT")
+    private int prefix;
     @Column(name = "clickid", length = 100)
     private String clickId;
     @Column(name = "sum")
@@ -33,7 +36,7 @@ public class PostBackEntity {
     @Column(name = "goal")
     private int goal;
     @Column(name = "afid")
-    private String afid;
+    private int afid;
     @Column(name = "status")
     private int status;
     @Column(name = "advname", length = 100)
@@ -66,26 +69,27 @@ public class PostBackEntity {
     private String t9;
     @Column(name = "t10", length = 100)
     private String t10;
-    @Column(name = "secret_key", length = 50)
+    @Column(name = "secretkey", length = 50)
     private String secretKey;
     @Column(name = "ipaddress", length = 20)
     private String ipAddress;
-    @Column(name = "full_url", length = 500)
+    @Column(name = "fullurl", length = 500)
     private String fullURL;
-    @Column(name = "postback_send")
+    @Column(name = "postbacksend")
     private int postbackSend;
 
     public PostBackEntity() {
     }
 
-    public PostBackEntity(String id, Date date, Time time, String clickId, double sum, String currency,
-                          int goal, String afid, int status, String advName, String offerName, String transactionId,
+    public PostBackEntity(String id, Date date, Time time, int prefix, String clickId, double sum, String currency,
+                          int goal, int afid, int status, String advName, String offerName, String transactionId,
                           String IDFA, String gaId, String t1, String t2, String t3, String t4, String t5,
                           String t6, String t7, String t8, String t9, String t10, String secretKey,
                           String ipAddress, String fullURL, int postbackSend) {
         this.id = id;
         this.date = date;
         this.time = time;
+        this.prefix = prefix;
         this.clickId = clickId;
         this.sum = sum;
         this.currency = currency;
@@ -329,11 +333,19 @@ public class PostBackEntity {
         this.postbackSend = postbackSend;
     }
 
-    public String getAfid() {
+    public int getAfid() {
         return afid;
     }
 
-    public void setAfid(String afid) {
+    public void setAfid(int afid) {
         this.afid = afid;
+    }
+
+    public int getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(int prefix) {
+        this.prefix = prefix;
     }
 }

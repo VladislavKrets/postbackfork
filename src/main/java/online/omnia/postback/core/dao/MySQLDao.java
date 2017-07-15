@@ -1,7 +1,9 @@
 package online.omnia.postback.core.dao;
 
+import online.omnia.postback.core.trackers.affise.AffiseTracker;
+import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
-import online.omnia.postback.core.trackers.entities.RoutingPostbackEntity;
+import online.omnia.postback.core.trackers.entities.AdvertsEntity;
 import online.omnia.postback.core.trackers.entities.TrackerEntity;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
  */
 public interface MySQLDao {
     void addPostback(PostBackEntity postBackEntity);
-    List<RoutingPostbackEntity> getAllRoutingPostbacks();
-    List<TrackerEntity> getBinomTrackers();
+    List<AdvertsEntity> getAllAdverts();
+    List<TrackerEntity> getTrackers();
+    List<AffiliatesEntity> getAffiliates();
 }
