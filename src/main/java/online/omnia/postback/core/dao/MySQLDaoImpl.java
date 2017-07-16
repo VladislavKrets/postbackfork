@@ -72,6 +72,25 @@ public class MySQLDaoImpl implements MySQLDao {
         return affiliates;
     }
 
+    @Override
+    public AffiliatesEntity getAffiliateByAffid(int affid) {
+        Session session = sessionFactory.openSession();
+        AffiliatesEntity affiliate = session.createQuery("select from AffiliatesEntity where affid=:affid",
+                AffiliatesEntity.class).setParameter("affid", affid).getSingleResult();
+        session.close();
+        return affiliate;
+    }
+
+    @Override
+    public TrackerEntity getTrackerByPrefix(int prefix) {
+        Session session = sessionFactory.openSession();
+        TrackerEntity trackerEntity = session.createQuery("select from TrackerEntity where prefix=:prefix",
+                TrackerEntity.class)
+                .setParameter("prefix", prefix).getSingleResult();
+        session.close();
+        return trackerEntity;
+    }
+
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
     }

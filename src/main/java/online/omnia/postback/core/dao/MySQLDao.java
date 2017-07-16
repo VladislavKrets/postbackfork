@@ -16,4 +16,6 @@ public interface MySQLDao {
     List<AdvertsEntity> getAllAdverts();
     List<TrackerEntity> getTrackers();
     List<AffiliatesEntity> getAffiliates();
+    TrackerEntity getTrackerByPrefix(int prefix);
+    AffiliatesEntity getAffiliateByAffid(int affid);
 }
