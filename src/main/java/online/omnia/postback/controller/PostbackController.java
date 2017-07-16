@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -84,6 +83,7 @@ public class PostbackController {
         } catch (NoClickIdException e) {
             logger.debug("Invalid click id");
             logger.debug(e.getMessage());
+
         }
     }
     private void affiseHandler(PostBackEntity postBackEntity) {
