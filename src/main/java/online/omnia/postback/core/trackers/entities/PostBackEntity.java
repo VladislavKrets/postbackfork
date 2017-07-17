@@ -19,13 +19,10 @@ public class PostBackEntity {
     @Column(name = "id")
     private String id;
     @Column(name = "date")
-    @Type(type = "DATE")
     private Date date;
     @Column(name = "time")
-    @Type(type = "TIME")
     private Time time;
     @Column(name = "prefix")
-    @Type(type = "TINYINT")
     private int prefix;
     @Column(name = "clickid", length = 100)
     private String clickId;

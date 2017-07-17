@@ -20,9 +20,17 @@ public class FileWorkingUtils {
 
     static {
         try {
-            postbackURLWriter = new FileWriter("/postback/postback.url", true);
-            errorPostbackURLWriter = new FileWriter("/postback/postback.url", true);
+            File postbackDirectory = new File("postback");
+            if (!postbackDirectory.exists()) postbackDirectory.mkdir();
+            File file = new File("postback/postback.url");
+            if (!file.exists()) file.createNewFile();
+
+            postbackURLWriter = new FileWriter(file, true);
+            file = new File("postback/error_postback.url");
+            if (!file.exists()) file.createNewFile();
+            errorPostbackURLWriter = new FileWriter(file, true);
         } catch (IOException e) {
+            e.printStackTrace();
             logger.debug("Exception during initializing fileWriters");
             logger.debug(e.getMessage());
         }
@@ -30,7 +38,7 @@ public class FileWorkingUtils {
     public static Map<String, String> iniFileReader() {
         Map<String, String> properties = new HashMap<>();
         try {
-            fileReader = new BufferedReader(new FileReader("/data.ini"));
+            fileReader = new BufferedReader(new FileReader("data.ini"));
             String property;
             String[] propertyArray;
             while ((property = fileReader.readLine()) != null) {

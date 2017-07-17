@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,8 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(PostBackEntity.class)
                 .addAnnotatedClass(AdvertsEntity.class)
                 .addAnnotatedClass(TrackerEntity.class)
-                .configure("hibernate.cfg.xml");
+                .addAnnotatedClass(AffiliatesEntity.class)
+                .configure("/hibernate.cfg.xml");
         Map<String, String> properties = FileWorkingUtils.iniFileReader();
         configuration.setProperty("hibernate.connection.password", properties.get("password"));
         configuration.setProperty("hibernate.connection.username", properties.get("username"));
@@ -73,10 +75,16 @@ public class MySQLDaoImpl implements MySQLDao {
     }
 
     @Override
-    public AffiliatesEntity getAffiliateByAffid(int affid) {
+    public AffiliatesEntity getAffiliateByAffid(int afid) {
+        AffiliatesEntity affiliate;
         Session session = sessionFactory.openSession();
-        AffiliatesEntity affiliate = session.createQuery("select from AffiliatesEntity where affid=:affid",
-                AffiliatesEntity.class).setParameter("affid", affid).getSingleResult();
+        try {
+            affiliate = session.createQuery("from AffiliatesEntity where afid=:afid",
+                    AffiliatesEntity.class).setParameter("afid", afid).getSingleResult();
+        }
+        catch (NoResultException e) {
+            affiliate = null;
+        }
         session.close();
         return affiliate;
     }
@@ -84,9 +92,14 @@ public class MySQLDaoImpl implements MySQLDao {
     @Override
     public TrackerEntity getTrackerByPrefix(int prefix) {
         Session session = sessionFactory.openSession();
-        TrackerEntity trackerEntity = session.createQuery("select from TrackerEntity where prefix=:prefix",
-                TrackerEntity.class)
-                .setParameter("prefix", prefix).getSingleResult();
+        TrackerEntity trackerEntity;
+        try {
+            trackerEntity = session.createQuery("from TrackerEntity where prefix=:prefix",
+                    TrackerEntity.class)
+                    .setParameter("prefix", prefix).getSingleResult();
+        } catch (NoResultException e) {
+            trackerEntity = null;
+        }
         session.close();
         return trackerEntity;
     }

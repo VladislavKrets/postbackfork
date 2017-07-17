@@ -1,7 +1,9 @@
 <hibernate-configuration>
 
     <session-factory>
-        <property name="connection.url">jdbc:mysql:vpn.server.omni-a.com/OM_sources
+        <!--<property name="connection.url">jdbc:mysql://vpn.server.omni-a.com/OM_sources
+        </property>-->
+        <property name="connection.url">jdbc:mysql://localhost/test?useSSL=true&amp;serverTimezone=UTC
         </property>
         <property name="connection.driver_class">com.mysql.jdbc.Driver
         </property>
@@ -12,6 +14,7 @@
         <property name="hbm2ddl.auto">update</property>
         <property name="hibernate.connection.CharSet">utf8</property>
         <property name="hibernate.connection.characterEncoding">utf8</property>
+
     </session-factory>
 
 </hibernate-configuration>
