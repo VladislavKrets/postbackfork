@@ -24,8 +24,8 @@ public class BinomTracker {
 
     public void sendPostback(PostBackEntity postBackEntity) throws NoClickIdException {
         String url = buildUrl(postBackEntity);
-
         String answer = HttpMethodsUtils.getMethod(url, headers);
+
 
     }
 
@@ -33,7 +33,7 @@ public class BinomTracker {
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "click.php?");
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
-        urlBuilder.append("cnv_id").append(postBackEntity.getClickId());
+        urlBuilder.append("cnv_id=").append(postBackEntity.getClickId());
         //ToDo
         return urlBuilder.toString();
     }
