@@ -32,6 +32,7 @@ public class PostbackController {
     public String sendPostback(@PathVariable(name = "postback_url") String postbackUrl, Model model){
         PostbackHandler postbackHandler = new PostbackHandler();
         java.util.Date currentDate = new java.util.Date();
+
         Map<String, String> parameters = postbackHandler.getPostbackParameters(postbackUrl);
         if (parameters.isEmpty()) return "SendPostback";
 
