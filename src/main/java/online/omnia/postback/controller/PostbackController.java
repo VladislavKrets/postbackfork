@@ -34,12 +34,12 @@ public class PostbackController {
         java.util.Date currentDate = new java.util.Date();
 
         Map<String, String> parameters = postbackHandler.getPostbackParameters(postbackUrl);
-        if (parameters.isEmpty()) return "SendPostback";
+        if (parameters.isEmpty()) return "Status error: 201 invalid conversion, parameters non present";
 
         if (!parameters.containsKey("clickid") || parameters.get("clickid").isEmpty()) {
             FileWorkingUtils.writeErrorPostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackUrl);
-            return "SendPostback";
+            return "Status error: 201 invalid conversion, clickid non present";
         }
 
         FileWorkingUtils.writePostback(new Date(currentDate.getTime()),
@@ -53,7 +53,7 @@ public class PostbackController {
         mySQLDao.addPostback(postBackEntity);
         chooseHandler(postBackEntity);
 
-        return "SendPostback";
+        return "Status: 200 OK";
     }
 
     private void chooseHandler(PostBackEntity postBackEntity) {
@@ -84,22 +84,43 @@ public class PostbackController {
 
     private void binomHandler(PostBackEntity postBackEntity, String url) {
         BinomTracker tracker = new BinomTracker(url + "/");
+        AffiseTracker affiseTracker = new AffiseTracker();
         try {
             tracker.sendPostback(postBackEntity);
+            if (postBackEntity.getAfid() != 0) {
+                switch (postBackEntity.getAfid()) {
+                    case 1001: postBackEntity.setClickId("596f55f8042391106dcf7230"); break;
+                    case 1002: postBackEntity.setClickId("596f5618042391106dcf731c"); break;
+                    case 1003: postBackEntity.setClickId("596f562a042391106dcf73a9"); break;
+                }
+            }
+            affiseTracker.sendPostback(postBackEntity);
         } catch (NoClickIdException e) {
             logger.debug("Invalid click id");
             logger.debug(e.getMessage());
-
+            postBackEntity.setClickId("3D596f4d28042391106dcf344b");
+            postBackEntity.setAfid(2);
+            try {
+                affiseTracker.sendPostback(postBackEntity);
+            } catch (NoClickIdException ignore) {}
         }
     }
     private void affiseHandler(PostBackEntity postBackEntity) {
         AffiseTracker tracker = new AffiseTracker();
+
         try {
             tracker.sendPostback(postBackEntity);
         } catch (NoClickIdException e) {
             logger.debug("Invalid click id");
             logger.debug(e.getMessage());
+            postBackEntity.setClickId("3D596f4d28042391106dcf344b");
+            postBackEntity.setAfid(2);
+            try {
+                tracker.sendPostback(postBackEntity);
+            } catch (NoClickIdException ignore) {}
         }
+
+
     }
 
 }

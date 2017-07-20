@@ -4,6 +4,8 @@ import online.omnia.postback.core.dao.MySQLDaoImpl;
 import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,17 +15,27 @@ import java.util.Map;
 public class PostbackHandler {
 
     public Map<String, String> getPostbackParameters(String url){
+
         Map<String, String> parametersMap = new HashMap<>();
         if (url == null || url.isEmpty()) return parametersMap;
 
-        String parameters = url.split("\\?")[1];
+        String[] urlParts = url.split("\\?");
+
+        if (urlParts.length != 2) return parametersMap;
+
+        String parameters = urlParts[1];
 
         String[] keyValuePairs = parameters.split("&");
         String[] pairs;
 
         for (String keyValuePair : keyValuePairs) {
             pairs = keyValuePair.split("=");
-            parametersMap.put(pairs[0], pairs[1]);
+            if (pairs.length == 2) {
+                parametersMap.put(pairs[0], pairs[1]);
+            }
+            else if (pairs.length == 1) {
+                parametersMap.put(pairs[0], "");
+            }
         }
 
         return parametersMap;
@@ -45,10 +57,10 @@ public class PostbackHandler {
 
         if (!isAffidInAffiliate(postBackEntity.getAfid())) postBackEntity.setAfid(2);
 
-        if (parameters.containsKey("sum")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
+        if (parameters.containsKey("sum") && !parameters.get("sum").isEmpty()) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
         if (parameters.containsKey("currency")) postBackEntity.setCurrency(parameters.get("currency"));
-        if (parameters.containsKey("goal")) postBackEntity.setGoal(Integer.parseInt(parameters.get("goal")));
-        if (parameters.containsKey("status")) postBackEntity.setStatus(Integer.parseInt(parameters.get("status")));
+        if (parameters.containsKey("goal") && !parameters.get("goal").isEmpty()) postBackEntity.setGoal(Integer.parseInt(parameters.get("goal")));
+        if (parameters.containsKey("status") && !parameters.get("status").isEmpty()) postBackEntity.setStatus(Integer.parseInt(parameters.get("status")));
         if (parameters.containsKey("advname")) postBackEntity.setAdvName(parameters.get("advname"));
         if (parameters.containsKey("offername")) postBackEntity.setOfferName(parameters.get("offername"));
         if (parameters.containsKey("transactionid")) postBackEntity.setTransactionId(parameters.get("transactionid"));
@@ -66,9 +78,9 @@ public class PostbackHandler {
         if (parameters.containsKey("t8")) postBackEntity.setT8(parameters.get("t8"));
         if (parameters.containsKey("t9")) postBackEntity.setT9(parameters.get("t9"));
         if (parameters.containsKey("t10")) postBackEntity.setT10(parameters.get("t10"));
-        if (parameters.containsKey("affid")) postBackEntity.setAfid(Integer.parseInt(parameters.get("affid")));
+        if (parameters.containsKey("affid") && !parameters.get("affid").isEmpty()) postBackEntity.setAfid(Integer.parseInt(parameters.get("affid")));
         else postBackEntity.setAfid(2);
-        if (parameters.containsKey("postbacksend")) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
+        if (parameters.containsKey("postbacksend") && !parameters.get("postbacksend").isEmpty()) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
         else postBackEntity.setPostbackSend(2);
 
         return postBackEntity;
