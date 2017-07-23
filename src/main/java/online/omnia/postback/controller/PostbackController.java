@@ -31,62 +31,81 @@ public class PostbackController {
     @RequestMapping(value = "/{postback_url}", method = RequestMethod.GET)
     public String sendPostback(@PathVariable(name = "postback_url") String postbackUrl, Model model){
         PostbackHandler postbackHandler = new PostbackHandler();
-        java.util.Date currentDate = new java.util.Date();
-
+        java.util.Date currentDate = new java.util.Date(System.currentTimeMillis());
+        System.out.println("Getting url parameters");
         Map<String, String> parameters = postbackHandler.getPostbackParameters(postbackUrl);
-        if (parameters.isEmpty()) return "Status error: 201 invalid conversion, parameters non present";
+        System.out.println("Parameters have been got");
+        if (parameters.isEmpty()){
+            System.out.println("Parameters are empty");
+            return "HTTP/1.1 201 error\r\n";
+        }
 
         if (!parameters.containsKey("clickid") || parameters.get("clickid").isEmpty()) {
+            System.out.println("clickid is not valid");
             FileWorkingUtils.writeErrorPostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackUrl);
-            return "Status error: 201 invalid conversion, clickid non present";
+            System.out.println("postback has been written to error_postback");
+            return "HTTP/1.1 201 error\r\n";
         }
 
         FileWorkingUtils.writePostback(new Date(currentDate.getTime()),
                 new Time(currentDate.getTime()), postbackUrl);
+        System.out.println("postback has been written to postback file");
+        System.out.println("Creating mySQLDao entity");
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
-
+        System.out.println("Creating postback entity");
         PostBackEntity postBackEntity = postbackHandler.fillPostback(parameters);
-
+        postBackEntity.setDate(new Date(currentDate.getTime()));
+        postBackEntity.setTime(new Time(currentDate.getTime()));
         postBackEntity.setFullURL(postbackUrl);
 
+        System.out.println("adding postback to dao");
         mySQLDao.addPostback(postBackEntity);
+        System.out.println("choosing handler");
         chooseHandler(postBackEntity);
 
-        return "Status: 200 OK";
+        return "HTTP/1.1 200 OK\r\n";
     }
 
     private void chooseHandler(PostBackEntity postBackEntity) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
+        System.out.println("Getting tracker from dao");
+        TrackerEntity affiseTracker = mySQLDao.getTrackerByPrefix(101);
         TrackerEntity tracker = mySQLDao.getTrackerByPrefix(postBackEntity.getPrefix());
         if (tracker != null) {
             switch (tracker.getPrefix()) {
                 case 101:
-                    affiseHandler(postBackEntity);
+                    System.out.println("sending to affise tracker");
+                    affiseHandler(postBackEntity, affiseTracker.getDomain());
                     break;
                 case 102:
-                    binomHandler(postBackEntity, tracker.getDomain());
+                    System.out.println("sending to binom tracker");
+                    binomHandler(postBackEntity, tracker.getDomain(), affiseTracker.getDomain());
                     break;
                 default: {
+                    System.out.println("sending to default: affise tracker");
                     postBackEntity.setPrefix(101);
                     postBackEntity.setAfid(2);
-                    affiseHandler(postBackEntity);
+                    affiseHandler(postBackEntity, affiseTracker.getDomain());
                 }
             }
         }
         else {
+            System.out.println("No tracker. Sending to affise tracker");
             postBackEntity.setPrefix(101);
             postBackEntity.setAfid(2);
-            affiseHandler(postBackEntity);
+            affiseHandler(postBackEntity, affiseTracker.getDomain());
         }
 
     }
 
-    private void binomHandler(PostBackEntity postBackEntity, String url) {
-        BinomTracker tracker = new BinomTracker(url + "/");
-        AffiseTracker affiseTracker = new AffiseTracker();
+    private void binomHandler(PostBackEntity postBackEntity, String binomUrl, String affiseUrl) {
+        BinomTracker tracker = new BinomTracker(binomUrl + "/");
+        AffiseTracker affiseTracker = new AffiseTracker(affiseUrl + "/");
         try {
+            System.out.println("sending to binom...");
             tracker.sendPostback(postBackEntity);
+            System.out.println("has been sent");
             if (postBackEntity.getAfid() != 0) {
                 switch (postBackEntity.getAfid()) {
                     case 1001: postBackEntity.setClickId("596f55f8042391106dcf7230"); break;
@@ -94,7 +113,9 @@ public class PostbackController {
                     case 1003: postBackEntity.setClickId("596f562a042391106dcf73a9"); break;
                 }
             }
+            System.out.println("sending to affise...");
             affiseTracker.sendPostback(postBackEntity);
+            System.out.println("has been sent");
         } catch (NoClickIdException e) {
             logger.debug("Invalid click id");
             logger.debug(e.getMessage());
@@ -105,11 +126,13 @@ public class PostbackController {
             } catch (NoClickIdException ignore) {}
         }
     }
-    private void affiseHandler(PostBackEntity postBackEntity) {
-        AffiseTracker tracker = new AffiseTracker();
+    private void affiseHandler(PostBackEntity postBackEntity, String affiseUrl) {
+        AffiseTracker tracker = new AffiseTracker(affiseUrl + "/");
 
         try {
+            System.out.println("sending to affise...");
             tracker.sendPostback(postBackEntity);
+            System.out.println("has been sent");
         } catch (NoClickIdException e) {
             logger.debug("Invalid click id");
             logger.debug(e.getMessage());

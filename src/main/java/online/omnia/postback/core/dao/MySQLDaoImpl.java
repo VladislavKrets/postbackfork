@@ -31,7 +31,7 @@ public class MySQLDaoImpl implements MySQLDao {
         Map<String, String> properties = FileWorkingUtils.iniFileReader();
         configuration.setProperty("hibernate.connection.password", properties.get("password"));
         configuration.setProperty("hibernate.connection.username", properties.get("username"));
-        configuration.setProperty("hibernate.connection.url", properties.get("url"));
+       // configuration.setProperty("hibernate.connection.url", properties.get("url"));
         sessionFactory = configuration.buildSessionFactory();
     }
 

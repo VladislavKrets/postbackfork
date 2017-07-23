@@ -2,10 +2,7 @@ package online.omnia.postback.core.trackers.entities;
 
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
 
@@ -16,8 +13,9 @@ import java.sql.Time;
 @Entity
 public class PostBackEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String id;
+    private int id;
     @Column(name = "date")
     private Date date;
     @Column(name = "time")
@@ -78,7 +76,7 @@ public class PostBackEntity {
     public PostBackEntity() {
     }
 
-    public PostBackEntity(String id, Date date, Time time, int prefix, String clickId, double sum, String currency,
+    public PostBackEntity(int id, Date date, Time time, int prefix, String clickId, double sum, String currency,
                           int goal, int afid, int status, String advName, String offerName, String transactionId,
                           String IDFA, String gaId, String t1, String t2, String t3, String t4, String t5,
                           String t6, String t7, String t8, String t9, String t10, String secretKey,
@@ -114,7 +112,7 @@ public class PostBackEntity {
         this.postbackSend = postbackSend;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -222,7 +220,7 @@ public class PostBackEntity {
         return postbackSend;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

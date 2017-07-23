@@ -24,7 +24,17 @@ public class PostbackHandler {
         if (urlParts.length != 2) return parametersMap;
 
         String parameters = urlParts[1];
-
+        if (!parameters.contains("&")) {
+            String[] pair = parameters.split("=");
+            if (pair.length == 0) return parametersMap;
+            if (pair.length == 2) {
+                parametersMap.put(pair[0], pair[1]);
+            }
+            else if (pair.length == 1) {
+                parametersMap.put(pair[0], "");
+            }
+            return parametersMap;
+        }
         String[] keyValuePairs = parameters.split("&");
         String[] pairs;
 
@@ -55,12 +65,13 @@ public class PostbackHandler {
             postBackEntity.setAfid(2);
         }
 
-        if (!isAffidInAffiliate(postBackEntity.getAfid())) postBackEntity.setAfid(2);
-
-        if (parameters.containsKey("sum") && !parameters.get("sum").isEmpty()) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
+       // if (!isAffidInAffiliate(postBackEntity.getAfid())) postBackEntity.setAfid(2);
+        postBackEntity.setAfid(2);
+        if (parameters.containsKey("sum") && parameters.get("sum").matches("\\d+.\\d+")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
         if (parameters.containsKey("currency")) postBackEntity.setCurrency(parameters.get("currency"));
-        if (parameters.containsKey("goal") && !parameters.get("goal").isEmpty()) postBackEntity.setGoal(Integer.parseInt(parameters.get("goal")));
-        if (parameters.containsKey("status") && !parameters.get("status").isEmpty()) postBackEntity.setStatus(Integer.parseInt(parameters.get("status")));
+        else postBackEntity.setCurrency("USD");
+        if (parameters.containsKey("goal") && parameters.get("goal").matches("\\d+")) postBackEntity.setGoal(Integer.parseInt(parameters.get("goal")));
+        if (parameters.containsKey("status") && parameters.get("status").matches("\\d+")) postBackEntity.setStatus(Integer.parseInt(parameters.get("status")));
         if (parameters.containsKey("advname")) postBackEntity.setAdvName(parameters.get("advname"));
         if (parameters.containsKey("offername")) postBackEntity.setOfferName(parameters.get("offername"));
         if (parameters.containsKey("transactionid")) postBackEntity.setTransactionId(parameters.get("transactionid"));
@@ -78,9 +89,9 @@ public class PostbackHandler {
         if (parameters.containsKey("t8")) postBackEntity.setT8(parameters.get("t8"));
         if (parameters.containsKey("t9")) postBackEntity.setT9(parameters.get("t9"));
         if (parameters.containsKey("t10")) postBackEntity.setT10(parameters.get("t10"));
-        if (parameters.containsKey("affid") && !parameters.get("affid").isEmpty()) postBackEntity.setAfid(Integer.parseInt(parameters.get("affid")));
+        if (parameters.containsKey("affid") && parameters.get("affid").matches("\\d+")) postBackEntity.setAfid(Integer.parseInt(parameters.get("affid")));
         else postBackEntity.setAfid(2);
-        if (parameters.containsKey("postbacksend") && !parameters.get("postbacksend").isEmpty()) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
+        if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+")) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
         else postBackEntity.setPostbackSend(2);
 
         return postBackEntity;

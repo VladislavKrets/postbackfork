@@ -6,6 +6,8 @@ import online.omnia.postback.core.utils.HttpMethodsUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,17 +25,22 @@ public class BinomTracker {
     }
 
     public void sendPostback(PostBackEntity postBackEntity) throws NoClickIdException {
-        String url = buildUrl(postBackEntity);
-        String answer = HttpMethodsUtils.getMethod(url, headers);
-
+        String url = null;
+        try {
+            url = buildUrl(postBackEntity);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        HttpMethodsUtils httpMethodsUtils = new HttpMethodsUtils();
+        String answer = httpMethodsUtils.getMethod(url, headers);
 
     }
 
-    private String buildUrl(PostBackEntity postBackEntity) throws NoClickIdException {
+    private String buildUrl(PostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "click.php?");
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
-        urlBuilder.append("cnv_id=").append(postBackEntity.getClickId());
+        urlBuilder.append("cnv_id=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
         //ToDo
         return urlBuilder.toString();
     }
