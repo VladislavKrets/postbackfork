@@ -1,7 +1,5 @@
 package online.omnia.postback.core.trackers.entities;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
@@ -72,7 +70,8 @@ public class PostBackEntity {
     private String fullURL;
     @Column(name = "postbacksend")
     private int postbackSend;
-
+    @Column(name = "offerid")
+    private String offerId;
     public PostBackEntity() {
     }
 
@@ -80,7 +79,7 @@ public class PostBackEntity {
                           int goal, int afid, int status, String advName, String offerName, String transactionId,
                           String IDFA, String gaId, String t1, String t2, String t3, String t4, String t5,
                           String t6, String t7, String t8, String t9, String t10, String secretKey,
-                          String ipAddress, String fullURL, int postbackSend) {
+                          String ipAddress, String fullURL, int postbackSend, String offerId) {
         this.id = id;
         this.date = date;
         this.time = time;
@@ -110,6 +109,7 @@ public class PostBackEntity {
         this.ipAddress = ipAddress;
         this.fullURL = fullURL;
         this.postbackSend = postbackSend;
+        this.offerId = offerId;
     }
 
     public int getId() {
@@ -342,5 +342,49 @@ public class PostBackEntity {
 
     public void setPrefix(int prefix) {
         this.prefix = prefix;
+    }
+
+    public String getOfferId() {
+        return offerId;
+    }
+
+    public void setOfferId(String offerId) {
+        this.offerId = offerId;
+    }
+
+    @Override
+    public String toString() {
+        return "PostBackEntity{" +
+                "id=" + id +
+                ", date=" + date +
+                ", time=" + time +
+                ", prefix=" + prefix +
+                ", clickId='" + clickId + '\'' +
+                ", sum=" + sum +
+                ", currency='" + currency + '\'' +
+                ", goal=" + goal +
+                ", afid=" + afid +
+                ", status=" + status +
+                ", advName='" + advName + '\'' +
+                ", offerName='" + offerName + '\'' +
+                ", transactionId='" + transactionId + '\'' +
+                ", IDFA='" + IDFA + '\'' +
+                ", GaId='" + GaId + '\'' +
+                ", t1='" + t1 + '\'' +
+                ", t2='" + t2 + '\'' +
+                ", t3='" + t3 + '\'' +
+                ", t4='" + t4 + '\'' +
+                ", t5='" + t5 + '\'' +
+                ", t6='" + t6 + '\'' +
+                ", t7='" + t7 + '\'' +
+                ", t8='" + t8 + '\'' +
+                ", t9='" + t9 + '\'' +
+                ", t10='" + t10 + '\'' +
+                ", secretKey='" + secretKey + '\'' +
+                ", ipAddress='" + ipAddress + '\'' +
+                ", fullURL='" + fullURL + '\'' +
+                ", postbackSend=" + postbackSend +
+                ", offerId='" + offerId + '\'' +
+                '}';
     }
 }

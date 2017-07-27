@@ -89,8 +89,6 @@ public class HttpMethodsUtils {
         while ((line = reader.readLine()) != null) {
             answerBuilder.append(line);
         }
-        System.out.println("Answer:");
-        System.out.println(answerBuilder.toString());
 
         System.out.println("Closing objects");
         EntityUtils.consume(response.getEntity());

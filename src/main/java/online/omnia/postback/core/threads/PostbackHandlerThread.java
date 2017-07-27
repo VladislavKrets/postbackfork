@@ -1,6 +1,6 @@
 package online.omnia.postback.core.threads;
 
-import online.omnia.postback.controller.PostbackController;
+import online.omnia.postback.controller.MainController;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -37,6 +37,7 @@ public class PostbackHandlerThread implements Runnable{
             String host = socket.getInetAddress().getHostName();
 
             while ((url = reader.readLine()) != null) {
+                System.out.println(url);
                 if (url.contains("GET")) {
                     String[] partsRequest = url.split(" ");
                     if (partsRequest.length == 3) {
@@ -50,9 +51,9 @@ public class PostbackHandlerThread implements Runnable{
 
             }
             System.out.println("Creating new postback controller");
-            PostbackController controller = new PostbackController();
+            MainController controller = new MainController();
             System.out.println("sending postback to controller");
-            String answer = controller.sendPostback(host + urlBuilder.toString(), null);
+            String answer = controller.sendPostback(host + urlBuilder.toString());
             System.out.println("Open output stream");
             OutputStream outputStream = socket.getOutputStream();
             outputStream.write(answer.getBytes("UTF-8"));

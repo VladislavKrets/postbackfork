@@ -46,11 +46,9 @@ public class AffiseTracker {
             throw new NoClickIdException();
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "postback?clickid=" + URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
         if (postBackEntity.getGoal() != 0) urlBuilder.append("&goal=").append(postBackEntity.getGoal());
-        else urlBuilder.append("&goal=1");
         if (postBackEntity.getSum() != 0) urlBuilder.append("&sum=").append(postBackEntity.getSum());
         if (postBackEntity.getIpAddress() != null) urlBuilder.append("&ip=").append(URLEncoder.encode(postBackEntity.getIpAddress(), "UTF-8"));
         if (postBackEntity.getStatus() != 0) urlBuilder.append("&status=").append(postBackEntity.getStatus());
-        else urlBuilder.append("&status=2");
         if (postBackEntity.getCurrency() != null) urlBuilder.append("&currency=").append(URLEncoder.encode(postBackEntity.getCurrency(), "UTF-8"));
         if (postBackEntity.getT1() != null) urlBuilder.append("&custom_field1=").append(URLEncoder.encode(postBackEntity.getT1(), "UTF-8"));
         if (postBackEntity.getT2() != null) urlBuilder.append("&custom_field2=").append(URLEncoder.encode(postBackEntity.getT2(), "UTF-8"));

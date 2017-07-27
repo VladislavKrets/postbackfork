@@ -1,15 +1,11 @@
 package online.omnia.postback;
 
 
-import online.omnia.postback.controller.PostbackController;
 import online.omnia.postback.core.dao.MySQLDaoImpl;
-import online.omnia.postback.core.exceptions.NoClickIdException;
 import online.omnia.postback.core.threads.PostbackHandlerThread;
 import online.omnia.postback.core.utils.FileWorkingUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;

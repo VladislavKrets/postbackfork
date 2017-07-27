@@ -28,11 +28,13 @@ public class BinomTracker {
         String url = null;
         try {
             url = buildUrl(postBackEntity);
+            System.out.println("Url had been built");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         HttpMethodsUtils httpMethodsUtils = new HttpMethodsUtils();
         String answer = httpMethodsUtils.getMethod(url, headers);
+        System.out.println(answer);
 
     }
 
@@ -41,6 +43,7 @@ public class BinomTracker {
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
         urlBuilder.append("cnv_id=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
+        if (postBackEntity.getSum() != 0) urlBuilder.append("&payout=").append(postBackEntity.getSum());
         //ToDo
         return urlBuilder.toString();
     }

@@ -3,9 +3,11 @@ package online.omnia.postback.core.utils;
 import online.omnia.postback.core.dao.MySQLDaoImpl;
 import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
+import online.omnia.postback.core.trackers.entities.TrackerEntity;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,15 +18,21 @@ public class PostbackHandler {
 
     public Map<String, String> getPostbackParameters(String url){
 
+        System.out.println(url);
         Map<String, String> parametersMap = new HashMap<>();
         if (url == null || url.isEmpty()) return parametersMap;
 
         String[] urlParts = url.split("\\?");
 
-        if (urlParts.length != 2) return parametersMap;
+        if (urlParts.length != 2){
+            System.out.println("No ?");
+            System.out.println(Arrays.asList(urlParts));
+            return parametersMap;
+        }
 
         String parameters = urlParts[1];
         if (!parameters.contains("&")) {
+            System.out.println("Not found &");
             String[] pair = parameters.split("=");
             if (pair.length == 0) return parametersMap;
             if (pair.length == 2) {
@@ -47,27 +55,27 @@ public class PostbackHandler {
                 parametersMap.put(pairs[0], "");
             }
         }
-
+        System.out.println("Parameters have been got");
         return parametersMap;
     }
     public PostBackEntity fillPostback(Map<String, String> parameters) {
         PostBackEntity postBackEntity = new PostBackEntity();
 
         String clickid = parameters.get("clickid");
+        System.out.println("Clickid = " + clickid);
         String prefix = parameters.get("clickid").length() > 3 ? clickid.substring(0, 3) : null;
-        if (prefix != null && prefix.matches("\\d\\d\\d")) {
+        System.out.println("Prefix = " + prefix);
+        if (prefix != null && prefix.matches("\\d\\d\\d") && isPrefixInTrackers(Integer.parseInt(prefix))) {
+
             postBackEntity.setClickId(clickid.substring(3, clickid.length()));
             postBackEntity.setPrefix(Integer.parseInt(prefix));
         }
         else {
             postBackEntity.setClickId(clickid);
-            postBackEntity.setPrefix(101);
-            postBackEntity.setAfid(2);
+            postBackEntity.setPrefix(0);
         }
 
-       // if (!isAffidInAffiliate(postBackEntity.getAfid())) postBackEntity.setAfid(2);
-        postBackEntity.setAfid(2);
-        if (parameters.containsKey("sum") && parameters.get("sum").matches("\\d+.\\d+")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
+        if (parameters.containsKey("sum") && parameters.get("sum").matches("\\d+.\\d+") || parameters.get("sum").matches("\\d+")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
         if (parameters.containsKey("currency")) postBackEntity.setCurrency(parameters.get("currency"));
         else postBackEntity.setCurrency("USD");
         if (parameters.containsKey("goal") && parameters.get("goal").matches("\\d+")) postBackEntity.setGoal(Integer.parseInt(parameters.get("goal")));
@@ -89,16 +97,17 @@ public class PostbackHandler {
         if (parameters.containsKey("t8")) postBackEntity.setT8(parameters.get("t8"));
         if (parameters.containsKey("t9")) postBackEntity.setT9(parameters.get("t9"));
         if (parameters.containsKey("t10")) postBackEntity.setT10(parameters.get("t10"));
-        if (parameters.containsKey("affid") && parameters.get("affid").matches("\\d+")) postBackEntity.setAfid(Integer.parseInt(parameters.get("affid")));
-        else postBackEntity.setAfid(2);
+        if (parameters.containsKey("offerid")) postBackEntity.setOfferId(parameters.get("offerid"));
+        if (parameters.containsKey("afid") && parameters.get("afid").matches("\\d+")) postBackEntity.setAfid(Integer.parseInt(parameters.get("afid")));
         if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+")) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
         else postBackEntity.setPostbackSend(2);
 
         return postBackEntity;
     }
-    private boolean isAffidInAffiliate(int affid) {
+
+    private boolean isPrefixInTrackers(int prefix) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
-        AffiliatesEntity affiliate = mySQLDao.getAffiliateByAffid(affid);
-        return affiliate != null;
+        TrackerEntity trackerEntity = mySQLDao.getTrackerByPrefix(prefix);
+        return trackerEntity != null;
     }
 }

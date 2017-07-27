@@ -31,12 +31,14 @@ public class MySQLDaoImpl implements MySQLDao {
         Map<String, String> properties = FileWorkingUtils.iniFileReader();
         configuration.setProperty("hibernate.connection.password", properties.get("password"));
         configuration.setProperty("hibernate.connection.username", properties.get("username"));
-       // configuration.setProperty("hibernate.connection.url", properties.get("url"));
+        configuration.setProperty("hibernate.connection.url", properties.get("url"));
         sessionFactory = configuration.buildSessionFactory();
     }
 
     private MySQLDaoImpl() {
     }
+
+
 
     @Override
     public void addPostback(PostBackEntity postBackEntity) {
@@ -108,7 +110,7 @@ public class MySQLDaoImpl implements MySQLDao {
         return sessionFactory;
     }
 
-    public static MySQLDaoImpl getInstance() {
+    public static synchronized MySQLDaoImpl getInstance() {
         if (instance == null) instance = new MySQLDaoImpl();
         return instance;
     }
