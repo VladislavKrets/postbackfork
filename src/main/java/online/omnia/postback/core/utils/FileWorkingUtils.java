@@ -35,7 +35,7 @@ public class FileWorkingUtils {
             logger.debug(e.getMessage());
         }
     }
-    public static Map<String, String> iniFileReader() {
+    public static synchronized Map<String, String> iniFileReader() {
         Map<String, String> properties = new HashMap<>();
         try {
             fileReader = new BufferedReader(new FileReader("configuration.ini"));
@@ -51,7 +51,7 @@ public class FileWorkingUtils {
         }
         return properties;
     }
-    public static void writePostback(Date date, Time time, String fullUrl){
+    public static synchronized void writePostback(Date date, Time time, String fullUrl){
         String line = buildLine(date, time, fullUrl);
         try {
             postbackURLWriter.write(line);
@@ -61,7 +61,7 @@ public class FileWorkingUtils {
         }
     }
 
-    public static void writeErrorPostback(Date date, Time time, String fullUrl) {
+    public static synchronized void writeErrorPostback(Date date, Time time, String fullUrl) {
         String line = buildLine(date, time, fullUrl);
         try {
             errorPostbackURLWriter.write(line);
