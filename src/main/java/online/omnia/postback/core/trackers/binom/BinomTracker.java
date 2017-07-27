@@ -44,6 +44,7 @@ public class BinomTracker {
             throw new NoClickIdException();
         urlBuilder.append("cnv_id=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
         if (postBackEntity.getSum() != 0) urlBuilder.append("&payout=").append(postBackEntity.getSum());
+        if (postBackEntity.getStatus() != null) urlBuilder.append("&cnv_status=").append(postBackEntity.getStatus());
         //ToDo
         return urlBuilder.toString();
     }

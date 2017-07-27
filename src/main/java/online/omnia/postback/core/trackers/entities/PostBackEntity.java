@@ -26,12 +26,12 @@ public class PostBackEntity {
     private double sum;
     @Column(name = "currency", length = 3)
     private String currency;
-    @Column(name = "goal")
-    private int goal;
+    @Column(name = "goal", length = 50)
+    private String goal;
     @Column(name = "afid")
     private int afid;
-    @Column(name = "status")
-    private int status;
+    @Column(name = "status", length = 50)
+    private String status;
     @Column(name = "advname", length = 100)
     private String advName;
     @Column(name = "offername", length = 100)
@@ -76,7 +76,7 @@ public class PostBackEntity {
     }
 
     public PostBackEntity(int id, Date date, Time time, int prefix, String clickId, double sum, String currency,
-                          int goal, int afid, int status, String advName, String offerName, String transactionId,
+                          String goal, int afid, String status, String advName, String offerName, String transactionId,
                           String IDFA, String gaId, String t1, String t2, String t3, String t4, String t5,
                           String t6, String t7, String t8, String t9, String t10, String secretKey,
                           String ipAddress, String fullURL, int postbackSend, String offerId) {
@@ -136,11 +136,11 @@ public class PostBackEntity {
         return currency;
     }
 
-    public int getGoal() {
+    public String getGoal() {
         return goal;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
@@ -244,11 +244,11 @@ public class PostBackEntity {
         this.currency = currency;
     }
 
-    public void setGoal(int goal) {
+    public void setGoal(String goal) {
         this.goal = goal;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

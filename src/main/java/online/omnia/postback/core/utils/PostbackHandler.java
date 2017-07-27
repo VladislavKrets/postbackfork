@@ -78,8 +78,8 @@ public class PostbackHandler {
         if (parameters.containsKey("sum") && parameters.get("sum").matches("\\d+.\\d+") || parameters.get("sum").matches("\\d+")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
         if (parameters.containsKey("currency")) postBackEntity.setCurrency(parameters.get("currency"));
         else postBackEntity.setCurrency("USD");
-        if (parameters.containsKey("goal") && parameters.get("goal").matches("\\d+")) postBackEntity.setGoal(Integer.parseInt(parameters.get("goal")));
-        if (parameters.containsKey("status") && parameters.get("status").matches("\\d+")) postBackEntity.setStatus(Integer.parseInt(parameters.get("status")));
+        if (parameters.containsKey("goal")) postBackEntity.setGoal(parameters.get("goal"));
+        if (parameters.containsKey("status")) postBackEntity.setStatus(parameters.get("status"));
         if (parameters.containsKey("advname")) postBackEntity.setAdvName(parameters.get("advname"));
         if (parameters.containsKey("offername")) postBackEntity.setOfferName(parameters.get("offername"));
         if (parameters.containsKey("transactionid")) postBackEntity.setTransactionId(parameters.get("transactionid"));
