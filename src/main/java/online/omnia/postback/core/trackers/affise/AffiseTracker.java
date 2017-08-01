@@ -45,10 +45,10 @@ public class AffiseTracker {
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "postback?clickid=" + URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
-        if (postBackEntity.getGoal() != 0) urlBuilder.append("&goal=").append(postBackEntity.getGoal());
+        if (postBackEntity.getGoal() != null) urlBuilder.append("&goal=").append(postBackEntity.getGoal());
         if (postBackEntity.getSum() != 0) urlBuilder.append("&sum=").append(postBackEntity.getSum());
         if (postBackEntity.getIpAddress() != null) urlBuilder.append("&ip=").append(URLEncoder.encode(postBackEntity.getIpAddress(), "UTF-8"));
-        if (postBackEntity.getStatus() != 0) urlBuilder.append("&status=").append(postBackEntity.getStatus());
+        if (postBackEntity.getStatus() != null) urlBuilder.append("&status=").append(postBackEntity.getStatus());
         if (postBackEntity.getCurrency() != null) urlBuilder.append("&currency=").append(URLEncoder.encode(postBackEntity.getCurrency(), "UTF-8"));
         if (postBackEntity.getT1() != null) urlBuilder.append("&custom_field1=").append(URLEncoder.encode(postBackEntity.getT1(), "UTF-8"));
         if (postBackEntity.getT2() != null) urlBuilder.append("&custom_field2=").append(URLEncoder.encode(postBackEntity.getT2(), "UTF-8"));
@@ -57,6 +57,9 @@ public class AffiseTracker {
         if (postBackEntity.getT5() != null) urlBuilder.append("&custom_field5=").append(URLEncoder.encode(postBackEntity.getT5(), "UTF-8"));
         if (postBackEntity.getT6() != null) urlBuilder.append("&custom_field6=").append(URLEncoder.encode(postBackEntity.getT6(), "UTF-8"));
         if (postBackEntity.getT7() != null) urlBuilder.append("&custom_field7=").append(URLEncoder.encode(postBackEntity.getT7(), "UTF-8"));
+        if (postBackEntity.getSecretKey() != null) urlBuilder.append("&secret=").append(URLEncoder.encode(postBackEntity.getSecretKey(), "UTF-8"));
+        if (postBackEntity.getTransactionId() != null) urlBuilder.append("&action_id=").append(URLEncoder.encode(postBackEntity.getTransactionId(), "UTF-8"));
+        else urlBuilder.append("&action_id=").append(postBackEntity.getActionId());
         return urlBuilder.toString();
     }
 }

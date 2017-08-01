@@ -39,11 +39,23 @@ public class MySQLDaoImpl implements MySQLDao {
     }
 
 
-
+    public PostBackEntity getPostbackByTransactionId(String transactionId) {
+        Session session = sessionFactory.openSession();
+        PostBackEntity postBackEntity = null;
+        try {
+            postBackEntity = session.createQuery("from PostBackEntity where transactionid=:transactionid", PostBackEntity.class)
+                    .setParameter("transactionid", transactionId).getSingleResult();
+        } catch (NoResultException e) {
+            postBackEntity = null;
+        }
+        session.close();
+        return postBackEntity;
+    }
     @Override
     public void addPostback(PostBackEntity postBackEntity) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+        if (postBackEntity.getTransactionId() == null) postBackEntity.setTransactionId(postBackEntity.getActionId());
         session.save(postBackEntity);
         session.getTransaction().commit();
         session.close();
@@ -92,7 +104,7 @@ public class MySQLDaoImpl implements MySQLDao {
     }
 
     @Override
-    public TrackerEntity getTrackerByPrefix(int prefix) {
+    public TrackerEntity getTrackerByPrefix(String prefix) {
         Session session = sessionFactory.openSession();
         TrackerEntity trackerEntity;
         try {

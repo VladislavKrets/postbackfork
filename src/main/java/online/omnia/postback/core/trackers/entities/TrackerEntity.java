@@ -13,7 +13,7 @@ import javax.persistence.Table;
 public class TrackerEntity {
     @Id
     @Column(name = "prefix")
-    private int prefix;
+    private String prefix;
     @Column(name = "name", length = 50)
     private String name;
     @Column(name = "domain", length = 100)
@@ -26,7 +26,7 @@ public class TrackerEntity {
     public TrackerEntity() {
     }
 
-    public int getPrefix() {
+    public String getPrefix() {
         return prefix;
     }
 

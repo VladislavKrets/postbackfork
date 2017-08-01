@@ -1,5 +1,6 @@
 package online.omnia.postback.core.utils;
 
+import online.omnia.postback.core.dao.MySQLDao;
 import online.omnia.postback.core.dao.MySQLDaoImpl;
 import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
@@ -10,6 +11,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by lollipop on 11.07.2017.
@@ -61,19 +63,20 @@ public class PostbackHandler {
     public PostBackEntity fillPostback(Map<String, String> parameters) {
         PostBackEntity postBackEntity = new PostBackEntity();
 
-        String clickid = parameters.get("clickid");
+        String clickid = parameters.containsKey("clickid") ? parameters.get("clickid") : null;
+        String prefix = null;
+        int prefixNumber;
+        int clickIdLength = clickid != null ? clickid.length() : 0;
         System.out.println("Clickid = " + clickid);
-        String prefix = parameters.get("clickid").length() > 3 ? clickid.substring(0, 3) : null;
-        System.out.println("Prefix = " + prefix);
-        if (prefix != null && prefix.matches("\\d\\d\\d") && isPrefixInTrackers(Integer.parseInt(prefix))) {
+        if (clickIdLength > 0 && clickid.contains("_")){
+            prefixNumber = clickid.indexOf("_");
+            prefix = clickid.substring(0, prefixNumber);
+            if (!isPrefixInTrackers(prefix)) prefix = null;
+            else clickid = clickid.substring(prefixNumber + 1, clickIdLength);
+        }
 
-            postBackEntity.setClickId(clickid.substring(3, clickid.length()));
-            postBackEntity.setPrefix(Integer.parseInt(prefix));
-        }
-        else {
-            postBackEntity.setClickId(clickid);
-            postBackEntity.setPrefix(0);
-        }
+        postBackEntity.setClickId(clickid);
+        postBackEntity.setPrefix(prefix);
 
         if (parameters.containsKey("sum") && parameters.get("sum").matches("\\d+.\\d+") || parameters.get("sum").matches("\\d+")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
         if (parameters.containsKey("currency")) postBackEntity.setCurrency(parameters.get("currency"));
@@ -102,10 +105,28 @@ public class PostbackHandler {
         if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+")) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
         else postBackEntity.setPostbackSend(2);
 
+
+        Random random = new Random();
+        StringBuilder actionId = new StringBuilder();
+        int numberLength = random.nextInt(8) + 12;
+        while (true) {
+            for (int i = 0; i < numberLength; i++) {
+                actionId.append(random.nextInt(10));
+            }
+            if (!isTransactionidInDB(actionId.toString())) break;
+            else actionId = new StringBuilder();
+        }
+        postBackEntity.setActionId(actionId.toString());
         return postBackEntity;
     }
 
-    private boolean isPrefixInTrackers(int prefix) {
+    private boolean isTransactionidInDB(String transactionId) {
+        MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
+        PostBackEntity postBackEntity = mySQLDao.getPostbackByTransactionId(transactionId);
+        return postBackEntity != null;
+    }
+
+    private boolean isPrefixInTrackers(String prefix) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
         TrackerEntity trackerEntity = mySQLDao.getTrackerByPrefix(prefix);
         return trackerEntity != null;

@@ -50,13 +50,13 @@ public class MainController {
         System.out.println("Setting url");
         postBackEntity.setFullURL(postbackURL);
 
-        if (postBackEntity.getPrefix() == 0) {
+        if (postBackEntity.getPrefix() == null) {
             System.out.println("No prefix or prefix is wrong");
             System.out.println("Writing to error_log");
             FileWorkingUtils.writeErrorPostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackURL);
             System.out.println("Setting prefix, afid and clickid");
-            postBackEntity.setPrefix(101);
+            postBackEntity.setPrefix("333");
             postBackEntity.setAfid(2);
             postBackEntity.setClickId(MySQLDaoImpl.getInstance().getAffiliateByAffid(2).getAffiseClickid());
             System.out.println("Adding to db");
@@ -78,7 +78,7 @@ public class MainController {
             System.out.println("Writing to postback_log");
             FileWorkingUtils.writePostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackURL);
-            if (postBackEntity.getPrefix() == 101) {
+            if (postBackEntity.getPrefix().equals("333")) {
                 System.out.println("Using affiseHandler");
                 affiseHandler(postBackEntity);
                 System.out.println("Done");
@@ -95,7 +95,7 @@ public class MainController {
     private void binomHandler(PostBackEntity postBackEntity) {
         System.out.println("Creating affise tracker entity");
         AffiseTracker tracker = new AffiseTracker(MySQLDaoImpl.getInstance()
-                .getTrackerByPrefix(101).getDomain() + "/");
+                .getTrackerByPrefix("333").getDomain() + "/");
         if (!isAffidInAffiliate(postBackEntity.getAfid())) {
             System.out.println("No afid in affiliates");
             System.out.println("Setting afid to 2");

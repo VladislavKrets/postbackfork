@@ -42,9 +42,10 @@ public class BinomTracker {
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "click.php?");
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
-        urlBuilder.append("cnv_id=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
-        if (postBackEntity.getSum() != 0) urlBuilder.append("&payout=").append(postBackEntity.getSum());
-        if (postBackEntity.getStatus() != null) urlBuilder.append("&cnv_status=").append(postBackEntity.getStatus());
+        urlBuilder.append("cnid=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
+        if (postBackEntity.getSum() != 0) urlBuilder.append("&sm=").append(postBackEntity.getSum());
+        if (postBackEntity.getStatus() != null) urlBuilder.append("&cnst1=").append(postBackEntity.getStatus());
+
         //ToDo
         return urlBuilder.toString();
     }

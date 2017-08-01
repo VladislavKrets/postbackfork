@@ -18,8 +18,8 @@ public class PostBackEntity {
     private Date date;
     @Column(name = "time")
     private Time time;
-    @Column(name = "prefix")
-    private int prefix;
+    @Column(name = "prefix", length = 50)
+    private String prefix;
     @Column(name = "clickid", length = 100)
     private String clickId;
     @Column(name = "sum")
@@ -72,10 +72,12 @@ public class PostBackEntity {
     private int postbackSend;
     @Column(name = "offerid")
     private String offerId;
+    @Transient
+    private String actionId;
     public PostBackEntity() {
     }
 
-    public PostBackEntity(int id, Date date, Time time, int prefix, String clickId, double sum, String currency,
+    public PostBackEntity(int id, Date date, Time time, String prefix, String clickId, double sum, String currency,
                           String goal, int afid, String status, String advName, String offerName, String transactionId,
                           String IDFA, String gaId, String t1, String t2, String t3, String t4, String t5,
                           String t6, String t7, String t8, String t9, String t10, String secretKey,
@@ -336,11 +338,11 @@ public class PostBackEntity {
         this.afid = afid;
     }
 
-    public int getPrefix() {
+    public String getPrefix() {
         return prefix;
     }
 
-    public void setPrefix(int prefix) {
+    public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
@@ -386,5 +388,13 @@ public class PostBackEntity {
                 ", postbackSend=" + postbackSend +
                 ", offerId='" + offerId + '\'' +
                 '}';
+    }
+
+    public String getActionId() {
+        return actionId;
+    }
+
+    public void setActionId(String actionId) {
+        this.actionId = actionId;
     }
 }
