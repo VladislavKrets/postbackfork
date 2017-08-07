@@ -5,6 +5,7 @@ import online.omnia.postback.core.trackers.entities.PostBackEntity;
 import online.omnia.postback.core.trackers.entities.AdvertsEntity;
 import online.omnia.postback.core.trackers.entities.TrackerEntity;
 import online.omnia.postback.core.utils.FileWorkingUtils;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -31,7 +32,7 @@ public class MySQLDaoImpl implements MySQLDao {
         Map<String, String> properties = FileWorkingUtils.iniFileReader();
         configuration.setProperty("hibernate.connection.password", properties.get("password"));
         configuration.setProperty("hibernate.connection.username", properties.get("username"));
-        configuration.setProperty("hibernate.connection.url", properties.get("url"));
+        //configuration.setProperty("hibernate.connection.url", properties.get("url"));
         sessionFactory = configuration.buildSessionFactory();
     }
 
@@ -105,6 +106,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     @Override
     public PostBackEntity getPostbackByClickAndTransactionId(String clickId, String transactionId) {
+
         Session session = sessionFactory.openSession();
         PostBackEntity postBackEntity;
         try {
@@ -116,6 +118,13 @@ public class MySQLDaoImpl implements MySQLDao {
         }
         catch (NoResultException e) {
             postBackEntity = null;
+        }
+        catch (NonUniqueResultException e) {
+            postBackEntity = session.createQuery("from PostBackEntity where clickid=:clickId and transactionid=:transactionId",
+                    PostBackEntity.class)
+                    .setParameter("clickId", clickId)
+                    .setParameter("transactionId", transactionId)
+                    .getResultList().get(0);
         }
         session.close();
         return postBackEntity;
@@ -133,6 +142,12 @@ public class MySQLDaoImpl implements MySQLDao {
         }
         catch (NoResultException e) {
             postBackEntity = null;
+        }
+        catch (NonUniqueResultException e) {
+            postBackEntity = session.createQuery("from PostBackEntity where fullurl=:fullurl",
+                    PostBackEntity.class)
+                    .setParameter("fullurl", fullUrl)
+                    .getResultList().get(0);
         }
         session.close();
         return postBackEntity;

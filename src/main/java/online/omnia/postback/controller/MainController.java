@@ -51,6 +51,7 @@ public class MainController {
         postBackEntity.setFullURL(postbackURL);
 
         if (isPostbackUrlInDB(postBackEntity.getFullURL())) {
+            System.out.println("Postback is FULL");
             postBackEntity.setDuplicate("FULL");
         }
 

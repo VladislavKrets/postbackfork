@@ -78,7 +78,7 @@ public class PostbackHandler {
         postBackEntity.setClickId(clickid);
         postBackEntity.setPrefix(prefix);
 
-        if (parameters.containsKey("sum") && parameters.get("sum").matches("\\d+.\\d+") || parameters.get("sum").matches("\\d+")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
+        if (parameters.containsKey("sum") && parameters.get("sum").matches("(\\d+.\\d+)|(\\d+)")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
         if (parameters.containsKey("currency")) postBackEntity.setCurrency(parameters.get("currency"));
         else postBackEntity.setCurrency("USD");
         if (parameters.containsKey("goal")) postBackEntity.setGoal(parameters.get("goal"));
@@ -120,6 +120,7 @@ public class PostbackHandler {
 
         if (postBackEntity.getTransactionId() != null
                 && isPostbackPartial(postBackEntity.getClickId(), postBackEntity.getTransactionId())){
+            System.out.println("is postback PARTIAl");
             postBackEntity.setDuplicate("PARTIAL");
         }
 
@@ -129,6 +130,7 @@ public class PostbackHandler {
     private boolean isPostbackPartial(String clickId, String transactionId) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
         PostBackEntity postBackEntity = mySQLDao.getPostbackByClickAndTransactionId(clickId, transactionId);
+        System.out.println(postBackEntity);
         return postBackEntity != null;
     }
 
