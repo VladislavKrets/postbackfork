@@ -50,6 +50,10 @@ public class MainController {
         System.out.println("Setting url");
         postBackEntity.setFullURL(postbackURL);
 
+        if (isPostbackUrlInDB(postBackEntity.getFullURL())) {
+            postBackEntity.setDuplicate("FULL");
+        }
+
         if (postBackEntity.getPrefix() == null) {
             System.out.println("No prefix or prefix is wrong");
             System.out.println("Writing to error_log");
@@ -90,6 +94,12 @@ public class MainController {
             }
         }
         return "HTTP/1.1 200 OK\r\n";
+    }
+
+    private boolean isPostbackUrlInDB(String postbackUrl) {
+        MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
+        PostBackEntity postBackEntity = mySQLDao.getPostbackByFullUrl(postbackUrl);
+        return postBackEntity != null;
     }
 
     private void binomHandler(PostBackEntity postBackEntity) {

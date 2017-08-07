@@ -117,7 +117,19 @@ public class PostbackHandler {
             else actionId = new StringBuilder();
         }
         postBackEntity.setActionId(actionId.toString());
+
+        if (postBackEntity.getTransactionId() != null
+                && isPostbackPartial(postBackEntity.getClickId(), postBackEntity.getTransactionId())){
+            postBackEntity.setDuplicate("PARTIAL");
+        }
+
         return postBackEntity;
+    }
+
+    private boolean isPostbackPartial(String clickId, String transactionId) {
+        MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
+        PostBackEntity postBackEntity = mySQLDao.getPostbackByClickAndTransactionId(clickId, transactionId);
+        return postBackEntity != null;
     }
 
     private boolean isTransactionidInDB(String transactionId) {

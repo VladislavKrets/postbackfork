@@ -104,6 +104,41 @@ public class MySQLDaoImpl implements MySQLDao {
     }
 
     @Override
+    public PostBackEntity getPostbackByClickAndTransactionId(String clickId, String transactionId) {
+        Session session = sessionFactory.openSession();
+        PostBackEntity postBackEntity;
+        try {
+            postBackEntity = session.createQuery("from PostBackEntity where clickid=:clickId and transactionid=:transactionId",
+                    PostBackEntity.class)
+                    .setParameter("clickId", clickId)
+                    .setParameter("transactionId", transactionId)
+                    .getSingleResult();
+        }
+        catch (NoResultException e) {
+            postBackEntity = null;
+        }
+        session.close();
+        return postBackEntity;
+    }
+
+    @Override
+    public PostBackEntity getPostbackByFullUrl(String fullUrl) {
+        Session session = sessionFactory.openSession();
+        PostBackEntity postBackEntity;
+        try {
+            postBackEntity = session.createQuery("from PostBackEntity where fullurl=:fullurl",
+                    PostBackEntity.class)
+                    .setParameter("fullurl", fullUrl)
+                    .getSingleResult();
+        }
+        catch (NoResultException e) {
+            postBackEntity = null;
+        }
+        session.close();
+        return postBackEntity;
+    }
+
+    @Override
     public TrackerEntity getTrackerByPrefix(String prefix) {
         Session session = sessionFactory.openSession();
         TrackerEntity trackerEntity;

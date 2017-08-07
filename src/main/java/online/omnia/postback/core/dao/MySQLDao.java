@@ -18,4 +18,6 @@ public interface MySQLDao {
     List<AffiliatesEntity> getAffiliates();
     TrackerEntity getTrackerByPrefix(String prefix);
     AffiliatesEntity getAffiliateByAffid(int affid);
+    PostBackEntity getPostbackByClickAndTransactionId(String clickId, String transactionId);
+    PostBackEntity getPostbackByFullUrl(String fullUrl);
 }
