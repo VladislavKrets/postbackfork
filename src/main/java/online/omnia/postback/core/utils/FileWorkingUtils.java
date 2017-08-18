@@ -1,6 +1,5 @@
 package online.omnia.postback.core.utils;
 
-import online.omnia.postback.core.trackers.entities.PostBackEntity;
 import org.apache.log4j.Logger;
 
 import java.io.*;

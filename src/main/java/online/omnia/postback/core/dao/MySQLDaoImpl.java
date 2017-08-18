@@ -1,16 +1,12 @@
 package online.omnia.postback.core.dao;
 
-import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
-import online.omnia.postback.core.trackers.entities.PostBackEntity;
-import online.omnia.postback.core.trackers.entities.AdvertsEntity;
-import online.omnia.postback.core.trackers.entities.TrackerEntity;
+import online.omnia.postback.core.trackers.entities.*;
 import online.omnia.postback.core.utils.FileWorkingUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.exception.JDBCConnectionException;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -31,6 +27,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(AdvertsEntity.class)
                 .addAnnotatedClass(TrackerEntity.class)
                 .addAnnotatedClass(AffiliatesEntity.class)
+                .addAnnotatedClass(ErrorPostBackEntity.class)
                 .configure("/hibernate.cfg.xml");
         Map<String, String> properties = FileWorkingUtils.iniFileReader();
         configuration.setProperty("hibernate.connection.password", properties.get("password"));
@@ -84,7 +81,27 @@ public class MySQLDaoImpl implements MySQLDao {
         session.close();
         return postBackEntity;
     }
-
+    public void addErrorPostback(ErrorPostBackEntity errorPostBackEntity) {
+        Session session = null;
+        while (true) {
+            try {
+                session = sessionFactory.openSession();
+                session.beginTransaction();
+                session.save(errorPostBackEntity);
+                session.getTransaction().commit();
+                break;
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        session.close();
+    }
     @Override
     public void addPostback(PostBackEntity postBackEntity) {
         Session session = null;

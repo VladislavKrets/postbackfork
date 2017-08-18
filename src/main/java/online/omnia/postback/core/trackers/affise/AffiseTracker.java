@@ -1,14 +1,12 @@
 package online.omnia.postback.core.trackers.affise;
 
 import online.omnia.postback.core.exceptions.NoClickIdException;
-import online.omnia.postback.core.trackers.entities.PostBackEntity;
+import online.omnia.postback.core.trackers.entities.AbstractPostBackEntity;
 import online.omnia.postback.core.utils.HttpMethodsUtils;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +23,7 @@ public class AffiseTracker {
         headers = new HashMap<>();
     }
 
-    public void sendPostback(PostBackEntity postBackEntity) throws NoClickIdException {
+    public void sendPostback(AbstractPostBackEntity postBackEntity) throws NoClickIdException {
         String url = "";
         try {
             url = buildUrl(postBackEntity);
@@ -41,7 +39,7 @@ public class AffiseTracker {
 
     }
 
-    private String buildUrl(PostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
+    private String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "postback?clickid=" + URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));

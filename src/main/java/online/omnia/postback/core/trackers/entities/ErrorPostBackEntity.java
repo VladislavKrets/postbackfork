@@ -6,8 +6,7 @@ import javax.persistence.Table;
 /**
  * Created by lollipop on 18.08.2017.
  */
-@Table(name = "postback")
 @Entity
-
-public class PostBackEntity extends AbstractPostBackEntity{
+@Table(name = "postback_incorrect")
+public class ErrorPostBackEntity extends PostBackEntity{
 }

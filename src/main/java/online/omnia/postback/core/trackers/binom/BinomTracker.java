@@ -1,11 +1,10 @@
 package online.omnia.postback.core.trackers.binom;
 
 import online.omnia.postback.core.exceptions.NoClickIdException;
-import online.omnia.postback.core.trackers.entities.PostBackEntity;
+import online.omnia.postback.core.trackers.entities.AbstractPostBackEntity;
 import online.omnia.postback.core.utils.HttpMethodsUtils;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -24,7 +23,7 @@ public class BinomTracker {
         headers = new HashMap<>();
     }
 
-    public void sendPostback(PostBackEntity postBackEntity) throws NoClickIdException {
+    public void sendPostback(AbstractPostBackEntity postBackEntity) throws NoClickIdException {
         String url = null;
         try {
             url = buildUrl(postBackEntity);
@@ -38,7 +37,7 @@ public class BinomTracker {
 
     }
 
-    private String buildUrl(PostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
+    private String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "click.php?");
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();

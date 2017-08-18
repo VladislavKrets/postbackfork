@@ -1,13 +1,11 @@
 package online.omnia.postback.core.utils;
 
-import online.omnia.postback.core.dao.MySQLDao;
 import online.omnia.postback.core.dao.MySQLDaoImpl;
-import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
+import online.omnia.postback.core.trackers.entities.AbstractPostBackEntity;
+import online.omnia.postback.core.trackers.entities.ErrorPostBackEntity;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
 import online.omnia.postback.core.trackers.entities.TrackerEntity;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,16 +125,54 @@ public class PostbackHandler {
         return postBackEntity;
     }
 
+    public ErrorPostBackEntity createError(PostBackEntity postBackEntity) {
+        ErrorPostBackEntity errorPostBackEntity = new ErrorPostBackEntity();
+        errorPostBackEntity.setActionId(postBackEntity.getActionId());
+        errorPostBackEntity.setAdvName(postBackEntity.getAdvName());
+        errorPostBackEntity.setAfid(postBackEntity.getAfid());
+        errorPostBackEntity.setClickId(postBackEntity.getClickId());
+        errorPostBackEntity.setCurrency(postBackEntity.getCurrency());
+        errorPostBackEntity.setDate(postBackEntity.getDate());
+        errorPostBackEntity.setDuplicate(postBackEntity.getDuplicate());
+        errorPostBackEntity.setFullURL(postBackEntity.getFullURL());
+        errorPostBackEntity.setGaId(postBackEntity.getGaId());
+        errorPostBackEntity.setGoal(postBackEntity.getGoal());
+        errorPostBackEntity.setId(postBackEntity.getId());
+        errorPostBackEntity.setIDFA(postBackEntity.getIDFA());
+        errorPostBackEntity.setIpAddress(postBackEntity.getIpAddress());
+        errorPostBackEntity.setOfferId(postBackEntity.getOfferId());
+        errorPostBackEntity.setOfferName(postBackEntity.getOfferName());
+        errorPostBackEntity.setPostbackSend(postBackEntity.getPostbackSend());
+        errorPostBackEntity.setPrefix(postBackEntity.getPrefix());
+        errorPostBackEntity.setSecretKey(postBackEntity.getSecretKey());
+        errorPostBackEntity.setStatus(postBackEntity.getStatus());
+        errorPostBackEntity.setSum(postBackEntity.getSum());
+        errorPostBackEntity.setT1(postBackEntity.getT1());
+        errorPostBackEntity.setT2(postBackEntity.getT2());
+        errorPostBackEntity.setT3(postBackEntity.getT3());
+        errorPostBackEntity.setT4(postBackEntity.getT4());
+        errorPostBackEntity.setT5(postBackEntity.getT5());
+        errorPostBackEntity.setT6(postBackEntity.getT6());
+        errorPostBackEntity.setT7(postBackEntity.getT7());
+        errorPostBackEntity.setT8(postBackEntity.getT8());
+        errorPostBackEntity.setT9(postBackEntity.getT9());
+        errorPostBackEntity.setT10(postBackEntity.getT10());
+        errorPostBackEntity.setTime(postBackEntity.getTime());
+        postBackEntity.setTransactionId(postBackEntity.getTransactionId());
+
+        return errorPostBackEntity;
+    }
+
     private boolean isPostbackPartial(String clickId, String transactionId) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
-        PostBackEntity postBackEntity = mySQLDao.getPostbackByClickAndTransactionId(clickId, transactionId);
+        AbstractPostBackEntity postBackEntity = mySQLDao.getPostbackByClickAndTransactionId(clickId, transactionId);
         System.out.println(postBackEntity);
         return postBackEntity != null;
     }
 
     private boolean isTransactionidInDB(String transactionId) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
-        PostBackEntity postBackEntity = mySQLDao.getPostbackByTransactionId(transactionId);
+        AbstractPostBackEntity postBackEntity = mySQLDao.getPostbackByTransactionId(transactionId);
         return postBackEntity != null;
     }
 

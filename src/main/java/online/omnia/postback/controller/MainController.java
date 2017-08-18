@@ -5,6 +5,7 @@ import online.omnia.postback.core.exceptions.NoClickIdException;
 import online.omnia.postback.core.trackers.affise.AffiseTracker;
 import online.omnia.postback.core.trackers.binom.BinomTracker;
 import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
+import online.omnia.postback.core.trackers.entities.AbstractPostBackEntity;
 import online.omnia.postback.core.trackers.entities.PostBackEntity;
 import online.omnia.postback.core.utils.FileWorkingUtils;
 import online.omnia.postback.core.utils.PostbackHandler;
@@ -20,12 +21,13 @@ import java.util.Map;
 public class MainController {
     final static Logger logger = Logger.getLogger(MainController.class);
     private java.util.Date currentDate;
+    private PostbackHandler postbackHandler;
     public MainController() {
         currentDate = new java.util.Date(System.currentTimeMillis());
+        postbackHandler = new PostbackHandler();
     }
 
     public String sendPostback(String postbackURL) {
-        PostbackHandler postbackHandler = new PostbackHandler();
         Map<String, String> parameters = postbackHandler.getPostbackParameters(postbackURL);
         System.out.println("Parameters have been got");
         if (parameters.isEmpty()){
@@ -65,7 +67,7 @@ public class MainController {
             postBackEntity.setAfid(2);
             postBackEntity.setClickId(MySQLDaoImpl.getInstance().getAffiliateByAffid(2).getAffiseClickid());
             System.out.println("Adding to db");
-            MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+            MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
 
             System.out.println("Sending to affise");
             AffiseTracker tracker = new AffiseTracker(MySQLDaoImpl.getInstance()
@@ -115,7 +117,7 @@ public class MainController {
             postBackEntity.setClickId(MySQLDaoImpl.getInstance()
                     .getAffiliateByAffid(postBackEntity.getAfid()).getAffiseClickid());
             System.out.println("Adding to db");
-            MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+            MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
             try {
                 System.out.println("Sending postback");
                 tracker.sendPostback(postBackEntity);
@@ -160,7 +162,7 @@ public class MainController {
             postBackEntity.setClickId(MySQLDaoImpl.getInstance()
                     .getAffiliateByAffid(postBackEntity.getAfid()).getAffiseClickid());
             System.out.println("Adding to db");
-            MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+            MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
             try {
                 System.out.println("Sending postback");
                 tracker.sendPostback(postBackEntity);
