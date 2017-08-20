@@ -65,7 +65,9 @@ public class MainController {
             System.out.println("Setting prefix, afid and clickid");
             postBackEntity.setPrefix("333");
             postBackEntity.setAfid(2);
-            postBackEntity.setClickId(MySQLDaoImpl.getInstance().getAffiliateByAffid(2).getAffiseClickid());
+            String clickId = MySQLDaoImpl.getInstance().getAffiliateByAffid(2).getAffiseClickid();
+            if (clickId == null) System.out.println("ClickId has been got from db is null");
+            postBackEntity.setClickId(clickId);
             System.out.println("Adding to db");
             MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
 
@@ -76,7 +78,8 @@ public class MainController {
                 System.out.println("sending postback");
                 tracker.sendPostback(postBackEntity);
             } catch (NoClickIdException e) {
-                e.printStackTrace();
+                System.out.println("Exception. ClickId is null");
+                return "HTTP/1.1 201 error\r\n";
             }
             System.out.println("Done");
             return "HTTP/1.1 200 OK\r\n";
