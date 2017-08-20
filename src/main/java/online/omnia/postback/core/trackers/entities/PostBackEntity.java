@@ -8,6 +8,5 @@ import javax.persistence.Table;
  */
 @Table(name = "postback")
 @Entity
-
 public class PostBackEntity extends AbstractPostBackEntity{
 }

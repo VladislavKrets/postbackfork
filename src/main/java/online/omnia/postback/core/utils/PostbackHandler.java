@@ -158,7 +158,8 @@ public class PostbackHandler {
         errorPostBackEntity.setT9(postBackEntity.getT9());
         errorPostBackEntity.setT10(postBackEntity.getT10());
         errorPostBackEntity.setTime(postBackEntity.getTime());
-        postBackEntity.setTransactionId(postBackEntity.getTransactionId());
+        errorPostBackEntity.setDuplicate(postBackEntity.getDuplicate());
+        errorPostBackEntity.setTransactionId(postBackEntity.getTransactionId());
 
         return errorPostBackEntity;
     }
