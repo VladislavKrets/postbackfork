@@ -72,7 +72,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -81,7 +81,7 @@ public class MySQLDaoImpl implements MySQLDao {
         session.close();
         return postBackEntity;
     }
-    public void addErrorPostback(ErrorPostBackEntity errorPostBackEntity) {
+    public synchronized void addErrorPostback(ErrorPostBackEntity errorPostBackEntity) {
         Session session = null;
         while (true) {
             try {
@@ -94,7 +94,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -103,7 +103,7 @@ public class MySQLDaoImpl implements MySQLDao {
         session.close();
     }
     @Override
-    public void addPostback(PostBackEntity postBackEntity) {
+    public synchronized void addPostback(PostBackEntity postBackEntity) {
         Session session = null;
         while (true) {
             try {
@@ -118,7 +118,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -142,7 +142,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -165,7 +165,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -188,7 +188,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -216,7 +216,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -254,7 +254,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -289,7 +289,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -319,7 +319,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(30000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
