@@ -76,7 +76,9 @@ public class MainController {
                     .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
             try {
                 System.out.println("sending postback");
-                tracker.sendPostback(postBackEntity);
+                String answer = tracker.sendPostback(postBackEntity);
+                FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), answer);
             } catch (NoClickIdException e) {
                 System.out.println("Exception. ClickId is null");
                 return "HTTP/1.1 201 error\r\n";
@@ -123,7 +125,9 @@ public class MainController {
             MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
             try {
                 System.out.println("Sending postback");
-                tracker.sendPostback(postBackEntity);
+                String answer = tracker.sendPostback(postBackEntity);
+                FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), answer);
             } catch (NoClickIdException e) {
                 e.printStackTrace();
             }
@@ -134,7 +138,9 @@ public class MainController {
                     .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
             try {
                 System.out.println("Sending to binom");
-                binomTracker.sendPostback(postBackEntity);
+                String answer = binomTracker.sendPostback(postBackEntity);
+                FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), answer);
             } catch (NoClickIdException e) {
                 e.printStackTrace();
             }
@@ -145,7 +151,9 @@ public class MainController {
                     .getAffiliateByAffid(postBackEntity.getAfid()).getAffiseClickid());
             try {
                 System.out.println("Sending to affise");
-                tracker.sendPostback(postBackEntity);
+                String answer = tracker.sendPostback(postBackEntity);
+                FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), answer);
             } catch (NoClickIdException e) {
                 e.printStackTrace();
             }
@@ -168,7 +176,9 @@ public class MainController {
             MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
             try {
                 System.out.println("Sending postback");
-                tracker.sendPostback(postBackEntity);
+                String answer = tracker.sendPostback(postBackEntity);
+                FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), answer);
             } catch (NoClickIdException e) {
                 e.printStackTrace();
             }
@@ -179,7 +189,9 @@ public class MainController {
             MySQLDaoImpl.getInstance().addPostback(postBackEntity);
             try {
                 System.out.println("Sending postback");
-                tracker.sendPostback(postBackEntity);
+                String answer = tracker.sendPostback(postBackEntity);
+                FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), answer);
             } catch (NoClickIdException e) {
                 e.printStackTrace();
             }

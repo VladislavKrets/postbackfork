@@ -23,7 +23,7 @@ public class AffiseTracker {
         headers = new HashMap<>();
     }
 
-    public void sendPostback(AbstractPostBackEntity postBackEntity) throws NoClickIdException {
+    public String sendPostback(AbstractPostBackEntity postBackEntity) throws NoClickIdException {
         String url = "";
         try {
             url = buildUrl(postBackEntity);
@@ -36,7 +36,7 @@ public class AffiseTracker {
         String answer = httpMethodsUtils.getMethod(url, headers);
         System.out.println(answer);
         //ToDo
-
+        return url + "\n" +answer;
     }
 
     private String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {

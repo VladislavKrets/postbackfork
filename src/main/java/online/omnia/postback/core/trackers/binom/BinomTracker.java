@@ -23,7 +23,7 @@ public class BinomTracker {
         headers = new HashMap<>();
     }
 
-    public void sendPostback(AbstractPostBackEntity postBackEntity) throws NoClickIdException {
+    public String sendPostback(AbstractPostBackEntity postBackEntity) throws NoClickIdException {
         String url = null;
         try {
             url = buildUrl(postBackEntity);
@@ -34,6 +34,7 @@ public class BinomTracker {
         HttpMethodsUtils httpMethodsUtils = new HttpMethodsUtils();
         String answer = httpMethodsUtils.getMethod(url, headers);
         System.out.println(answer);
+        return url + "\n" + answer;
 
     }
 
