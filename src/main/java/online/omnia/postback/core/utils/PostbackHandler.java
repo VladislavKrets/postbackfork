@@ -64,7 +64,7 @@ public class PostbackHandler {
         String clickid = parameters.containsKey("clickid") ? parameters.get("clickid") : null;
         String prefix = null;
         int prefixNumber;
-        int clickIdLength = clickid != null ? clickid.length() : 0;
+        int clickIdLength = (clickid != null && clickid.length() != 0) ? clickid.length() : 0;
         System.out.println("Clickid = " + clickid);
         if (clickIdLength > 0 && clickid.contains("_")){
             prefixNumber = clickid.indexOf("_");
@@ -102,22 +102,9 @@ public class PostbackHandler {
         if (parameters.containsKey("afid") && parameters.get("afid").matches("\\d+")) postBackEntity.setAfid(Integer.parseInt(parameters.get("afid")));
         if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+")) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
         else postBackEntity.setPostbackSend(2);
+        postBackEntity.setDuplicate("original");
 
-
-        Random random = new Random();
-        StringBuilder actionId = new StringBuilder();
-        int numberLength = random.nextInt(8) + 12;
-        while (true) {
-            for (int i = 0; i < numberLength; i++) {
-                actionId.append(random.nextInt(10));
-            }
-            if (!isTransactionidInDB(actionId.toString())) break;
-            else actionId = new StringBuilder();
-        }
-        postBackEntity.setActionId(actionId.toString());
-
-        if (postBackEntity.getTransactionId() != null
-                && isPostbackPartial(postBackEntity.getClickId(), postBackEntity.getTransactionId())){
+        if (isPostbackPartial(postBackEntity.getClickId())){
             System.out.println("is postback PARTIAl");
             postBackEntity.setDuplicate("PARTIAL");
         }
@@ -164,10 +151,9 @@ public class PostbackHandler {
         return errorPostBackEntity;
     }
 
-    private boolean isPostbackPartial(String clickId, String transactionId) {
+    private boolean isPostbackPartial(String clickId) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
-        AbstractPostBackEntity postBackEntity = mySQLDao.getPostbackByClickAndTransactionId(clickId, transactionId);
-        System.out.println(postBackEntity);
+        AbstractPostBackEntity postBackEntity = mySQLDao.getPostbackByClickId(clickId);
         return postBackEntity != null;
     }
 

@@ -2,7 +2,6 @@ package online.omnia.postback.core.dao;
 
 import online.omnia.postback.core.trackers.entities.*;
 import online.omnia.postback.core.utils.FileWorkingUtils;
-import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,29 +16,43 @@ import java.util.Map;
  * Created by lollipop on 12.07.2017.
  */
 public class MySQLDaoImpl implements MySQLDao {
-    private static Configuration configuration;
-    private static SessionFactory sessionFactory;
+    private static Configuration masterDbConfiguration;
+    private static SessionFactory masterDbSessionFactory;
+    private static Configuration secondDbConfiguration;
+    private static SessionFactory secondDbSessionFactory;
     private static MySQLDaoImpl instance;
 
     static {
-        configuration = new Configuration()
+        masterDbConfiguration = new Configuration()
                 .addAnnotatedClass(PostBackEntity.class)
                 .addAnnotatedClass(AdvertsEntity.class)
                 .addAnnotatedClass(TrackerEntity.class)
                 .addAnnotatedClass(AffiliatesEntity.class)
                 .addAnnotatedClass(ErrorPostBackEntity.class)
                 .configure("/hibernate.cfg.xml");
+        /*secondDbConfiguration  = new Configuration()
+                .addAnnotatedClass(PostBackEntity.class)
+                .addAnnotatedClass(AdvertsEntity.class)
+                .addAnnotatedClass(TrackerEntity.class)
+                .addAnnotatedClass(AffiliatesEntity.class)
+                .addAnnotatedClass(ErrorPostBackEntity.class)
+                .configure("/hibernate.cfg.xml");
+        */
         Map<String, String> properties = FileWorkingUtils.iniFileReader();
-        configuration.setProperty("hibernate.connection.password", properties.get("password"));
-        configuration.setProperty("hibernate.connection.username", properties.get("username"));
-        configuration.setProperty("hibernate.connection.url", properties.get("url"));
+        masterDbConfiguration.setProperty("hibernate.connection.password", properties.get("master_db_password"));
+        masterDbConfiguration.setProperty("hibernate.connection.username", properties.get("master_db_username"));
+        masterDbConfiguration.setProperty("hibernate.connection.url", properties.get("master_db_url"));
+        /*secondDbConfiguration.setProperty("hibernate.connection.password", properties.get("second_db_password"));
+        secondDbConfiguration.setProperty("hibernate.connection.username", properties.get("second_db_username"));
+        secondDbConfiguration.setProperty("hibernate.connection.url", properties.get("second_db_url"));
+*/
         while (true) {
             try {
-                sessionFactory = configuration.buildSessionFactory();
+                masterDbSessionFactory = masterDbConfiguration.buildSessionFactory();
                 break;
             } catch (PersistenceException e) {
                 try {
-                    System.out.println("Can't connect to db");
+                    System.out.println("Can't connect to master db");
                     System.out.println("Waiting for 30 seconds");
                     Thread.sleep(30000);
                 } catch (InterruptedException e1) {
@@ -47,10 +60,27 @@ public class MySQLDaoImpl implements MySQLDao {
                 }
             }
         }
-
+        /*while (true) {
+            try {
+                secondDbSessionFactory = secondDbConfiguration.buildSessionFactory();
+                break;
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to second db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }*/
     }
 
     private MySQLDaoImpl() {
+    }
+
+    public static SessionFactory getSecondDbSessionFactory() {
+        return secondDbSessionFactory;
     }
 
 
@@ -59,7 +89,7 @@ public class MySQLDaoImpl implements MySQLDao {
         PostBackEntity postBackEntity = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 postBackEntity = null;
                 try {
                     postBackEntity = session.createQuery("from PostBackEntity where transactionid=:transactionid", PostBackEntity.class)
@@ -72,7 +102,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -85,7 +115,7 @@ public class MySQLDaoImpl implements MySQLDao {
         Session session = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 session.beginTransaction();
                 session.save(errorPostBackEntity);
                 session.getTransaction().commit();
@@ -94,7 +124,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -107,10 +137,8 @@ public class MySQLDaoImpl implements MySQLDao {
         Session session = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 session.beginTransaction();
-                if (postBackEntity.getTransactionId() == null)
-                    postBackEntity.setTransactionId(postBackEntity.getActionId());
                 session.save(postBackEntity);
                 session.getTransaction().commit();
                 break;
@@ -118,7 +146,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -135,14 +163,14 @@ public class MySQLDaoImpl implements MySQLDao {
                 = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 advertsEntityList = session.createQuery("from Adverts", AdvertsEntity.class).getResultList();
                 break;
             } catch (PersistenceException e) {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -158,14 +186,14 @@ public class MySQLDaoImpl implements MySQLDao {
         List<TrackerEntity> trackerEntityList = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 trackerEntityList = session.createQuery("from TrackerEntity", TrackerEntity.class).getResultList();
                 break;
             } catch (PersistenceException e) {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -181,14 +209,14 @@ public class MySQLDaoImpl implements MySQLDao {
         List<AffiliatesEntity> affiliates = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 affiliates = session.createQuery("from AffiliatesEntity", AffiliatesEntity.class).getResultList();
                 break;
             } catch (PersistenceException e) {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -204,7 +232,7 @@ public class MySQLDaoImpl implements MySQLDao {
         Session session = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 try {
                     affiliate = session.createQuery("from AffiliatesEntity where afid=:afid",
                             AffiliatesEntity.class).setParameter("afid", afid).getSingleResult();
@@ -216,7 +244,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -227,26 +255,24 @@ public class MySQLDaoImpl implements MySQLDao {
     }
 
     @Override
-    public PostBackEntity getPostbackByClickAndTransactionId(String clickId, String transactionId) {
+    public PostBackEntity getPostbackByClickId(String clickId) {
 
         Session session = null;
         PostBackEntity postBackEntity = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 try {
-                    postBackEntity = session.createQuery("from PostBackEntity where clickid=:clickId and transactionid=:transactionId",
+                    postBackEntity = session.createQuery("from PostBackEntity where clickid=:clickId",
                             PostBackEntity.class)
                             .setParameter("clickId", clickId)
-                            .setParameter("transactionId", transactionId)
                             .getSingleResult();
                 } catch (NoResultException e) {
                     postBackEntity = null;
                 } catch (NonUniqueResultException e) {
-                    postBackEntity = session.createQuery("from PostBackEntity where clickid=:clickId and transactionid=:transactionId",
+                    postBackEntity = session.createQuery("from PostBackEntity where clickid=:clickId",
                             PostBackEntity.class)
                             .setParameter("clickId", clickId)
-                            .setParameter("transactionId", transactionId)
                             .getResultList().get(0);
                 }
                 break;
@@ -254,7 +280,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -270,7 +296,7 @@ public class MySQLDaoImpl implements MySQLDao {
         PostBackEntity postBackEntity = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 try {
                     postBackEntity = session.createQuery("from PostBackEntity where fullurl=:fullurl",
                             PostBackEntity.class)
@@ -289,7 +315,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -306,7 +332,7 @@ public class MySQLDaoImpl implements MySQLDao {
         TrackerEntity trackerEntity = null;
         while (true) {
             try {
-                session = sessionFactory.openSession();
+                session = masterDbSessionFactory.openSession();
                 try {
                     trackerEntity = session.createQuery("from TrackerEntity where prefix=:prefix",
                             TrackerEntity.class)
@@ -319,7 +345,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
-                    Thread.sleep(600);
+                    Thread.sleep(30000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -329,8 +355,8 @@ public class MySQLDaoImpl implements MySQLDao {
         return trackerEntity;
     }
 
-    public static SessionFactory getSessionFactory() {
-        return sessionFactory;
+    public static SessionFactory getMasterDbSessionFactory() {
+        return masterDbSessionFactory;
     }
 
     public static synchronized MySQLDaoImpl getInstance() {

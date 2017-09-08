@@ -76,6 +76,29 @@ public abstract class AbstractPostBackEntity {
     @Transient
     private String actionId;
     public AbstractPostBackEntity() {
+        clickId = "";
+        currency = "";
+        goal = "";
+        status = "";
+        advName = "";
+        offerName = "";
+        transactionId = "";
+        IDFA = "";
+        GaId = "";
+        t1 = "";
+        t2 = "";
+        t3 = "";
+        t4 = "";
+        t5 = "";
+        t6 = "";
+        t7 = "";
+        t8 = "";
+        t9 = "";
+        t10 = "";
+        secretKey = "";
+        ipAddress = "";
+        fullURL = "";
+        offerId = "";
     }
 
     public AbstractPostBackEntity(int id, Date date, Time time, String prefix, String clickId, double sum, String currency,
@@ -83,6 +106,7 @@ public abstract class AbstractPostBackEntity {
                                   String IDFA, String gaId, String t1, String t2, String t3, String t4, String t5,
                                   String t6, String t7, String t8, String t9, String t10, String secretKey,
                                   String ipAddress, String fullURL, int postbackSend, String offerId, String duplicate) {
+
         this.id = id;
         this.date = date;
         this.time = time;

@@ -41,6 +41,7 @@ public class FileWorkingUtils {
             String property;
             String[] propertyArray;
             while ((property = fileReader.readLine()) != null) {
+                if (property.trim().isEmpty() || property.trim().startsWith("#")) continue;
                 propertyArray = property.split("=");
                 properties.put(propertyArray[0], propertyArray[1]);
             }

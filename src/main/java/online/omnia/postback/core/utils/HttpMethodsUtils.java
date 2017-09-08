@@ -49,10 +49,10 @@ public class HttpMethodsUtils {
         return "";
     }
     public String getMethod(String url, Map<String, String> headers){
-
+        if (!(url.startsWith("http://") || url.startsWith("https://"))) url = "https://" + url;
         HttpGet httpGet = null;
 
-            httpGet = httpGet = new HttpGet(url);
+            httpGet = new HttpGet(url);
             System.out.println(url);
 
         try {
