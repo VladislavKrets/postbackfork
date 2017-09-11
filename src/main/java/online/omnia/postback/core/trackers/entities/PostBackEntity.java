@@ -8,5 +8,10 @@ import javax.persistence.Table;
  */
 @Table(name = "postback")
 @Entity
-public class PostBackEntity extends AbstractPostBackEntity{
+public class PostBackEntity extends AbstractPostBackEntity implements Cloneable{
+
+    @Override
+    public PostBackEntity clone() throws CloneNotSupportedException {
+        return (PostBackEntity) super.clone();
+    }
 }

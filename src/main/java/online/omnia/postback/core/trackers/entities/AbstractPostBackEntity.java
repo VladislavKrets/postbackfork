@@ -162,45 +162,6 @@ public abstract class AbstractPostBackEntity {
 
     }
 
-    public AbstractPostBackEntity(int id, Date date, Time time, String prefix, String clickId, double sum, String currency,
-                                  String goal, int afid, String status, String advName, String offerName, String transactionId,
-                                  String IDFA, String gaId, String t1, String t2, String t3, String t4, String t5,
-                                  String t6, String t7, String t8, String t9, String t10, String secretKey,
-                                  String ipAddress, String fullURL, int postbackSend, String offerId, String duplicate) {
-
-        this.id = id;
-        this.date = date;
-        this.time = time;
-        this.prefix = prefix;
-        this.clickId = clickId;
-        this.sum = sum;
-        this.currency = currency;
-        this.goal = goal;
-        this.afid = afid;
-        this.status = status;
-        this.advName = advName;
-        this.offerName = offerName;
-        this.transactionId = transactionId;
-        this.IDFA = IDFA;
-        GaId = gaId;
-        this.t1 = t1;
-        this.t2 = t2;
-        this.t3 = t3;
-        this.t4 = t4;
-        this.t5 = t5;
-        this.t6 = t6;
-        this.t7 = t7;
-        this.t8 = t8;
-        this.t9 = t9;
-        this.t10 = t10;
-        this.secretKey = secretKey;
-        this.ipAddress = ipAddress;
-        this.fullURL = fullURL;
-        this.postbackSend = postbackSend;
-        this.offerId = offerId;
-        this.duplicate = duplicate;
-    }
-
     public int getId() {
         return id;
     }
@@ -652,4 +613,5 @@ public abstract class AbstractPostBackEntity {
     public void setDuplicate(String duplicate) {
         this.duplicate = duplicate;
     }
+
 }

@@ -112,6 +112,7 @@ public class MainController {
                 .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
         try {
             System.out.println("Sending to binom");
+
             String answer = binomTracker.sendPostback(postBackEntity);
             FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
                     new Time(System.currentTimeMillis()), answer);
@@ -119,6 +120,7 @@ public class MainController {
             e.printStackTrace();
         }
         System.out.println("Adding to db");
+        addingEventToPostback(postBackEntity);
         MySQLDaoImpl.getInstance().addPostback(postBackEntity);
 
     }
@@ -129,6 +131,7 @@ public class MainController {
                 .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
         System.out.println(postBackEntity.getAfid());
         System.out.println("Adding to db");
+
         MySQLDaoImpl.getInstance().addPostback(postBackEntity);
         try {
             System.out.println("Sending postback");
@@ -139,7 +142,18 @@ public class MainController {
             e.printStackTrace();
         }
     }
-
+    private void addingEventToPostback(PostBackEntity postBackEntity) {
+        if (!postBackEntity.getAddEvent1().isEmpty()) postBackEntity.setEvent1(postBackEntity.getEvent1() + "+" + postBackEntity.getAddEvent1());
+        if (!postBackEntity.getAddEvent2().isEmpty()) postBackEntity.setEvent2(postBackEntity.getEvent2() + "+" + postBackEntity.getAddEvent2());
+        if (!postBackEntity.getAddEvent3().isEmpty()) postBackEntity.setEvent3(postBackEntity.getEvent3() + "+" + postBackEntity.getAddEvent3());
+        if (!postBackEntity.getAddEvent4().isEmpty()) postBackEntity.setEvent4(postBackEntity.getEvent4() + "+" + postBackEntity.getAddEvent4());
+        if (!postBackEntity.getAddEvent5().isEmpty()) postBackEntity.setEvent5(postBackEntity.getEvent5() + "+" + postBackEntity.getAddEvent5());
+        if (!postBackEntity.getAddEvent6().isEmpty()) postBackEntity.setEvent6(postBackEntity.getEvent6() + "+" + postBackEntity.getAddEvent6());
+        if (!postBackEntity.getAddEvent7().isEmpty()) postBackEntity.setEvent7(postBackEntity.getEvent7() + "+" + postBackEntity.getAddEvent7());
+        if (!postBackEntity.getAddEvent8().isEmpty()) postBackEntity.setEvent8(postBackEntity.getEvent8() + "+" + postBackEntity.getAddEvent8());
+        if (!postBackEntity.getAddEvent9().isEmpty()) postBackEntity.setEvent9(postBackEntity.getEvent9() + "+" + postBackEntity.getAddEvent9());
+        if (!postBackEntity.getAddEvent10().isEmpty()) postBackEntity.setEvent10(postBackEntity.getEvent10() + "+" + postBackEntity.getAddEvent10());
+    }
     private boolean isAffidInAffiliate(int affid) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
         AffiliatesEntity affiliate = mySQLDao.getAffiliateByAffid(affid);
