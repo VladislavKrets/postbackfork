@@ -73,6 +73,26 @@ public abstract class AbstractPostBackEntity {
     private String offerId;
     @Column(name = "duplicate")
     private String duplicate;
+    @Column(name = "event1")
+    private String event1;
+    @Column(name = "event2")
+    private String event2;
+    @Column(name = "event3")
+    private String event3;
+    @Column(name = "event4")
+    private String event4;
+    @Column(name = "event5")
+    private String event5;
+    @Column(name = "event6")
+    private String event6;
+    @Column(name = "event7")
+    private String event7;
+    @Column(name = "event8")
+    private String event8;
+    @Column(name = "event9")
+    private String event9;
+    @Column(name = "event10")
+    private String event10;
     @Transient
     private String actionId;
     public AbstractPostBackEntity() {
@@ -99,6 +119,16 @@ public abstract class AbstractPostBackEntity {
         ipAddress = "";
         fullURL = "";
         offerId = "";
+        event1 = "";
+        event2 = "";
+        event3 = "";
+        event4 = "";
+        event5 = "";
+        event6 = "";
+        event7 = "";
+        event8 = "";
+        event9 = "";
+        event10 = "";
     }
 
     public AbstractPostBackEntity(int id, Date date, Time time, String prefix, String clickId, double sum, String currency,
@@ -378,6 +408,86 @@ public abstract class AbstractPostBackEntity {
 
     public void setOfferId(String offerId) {
         this.offerId = offerId;
+    }
+
+    public String getEvent1() {
+        return event1;
+    }
+
+    public void setEvent1(String event1) {
+        this.event1 = event1;
+    }
+
+    public String getEvent2() {
+        return event2;
+    }
+
+    public void setEvent2(String event2) {
+        this.event2 = event2;
+    }
+
+    public String getEvent3() {
+        return event3;
+    }
+
+    public void setEvent3(String event3) {
+        this.event3 = event3;
+    }
+
+    public String getEvent4() {
+        return event4;
+    }
+
+    public void setEvent4(String event4) {
+        this.event4 = event4;
+    }
+
+    public String getEvent5() {
+        return event5;
+    }
+
+    public void setEvent5(String event5) {
+        this.event5 = event5;
+    }
+
+    public String getEvent6() {
+        return event6;
+    }
+
+    public void setEvent6(String event6) {
+        this.event6 = event6;
+    }
+
+    public String getEvent7() {
+        return event7;
+    }
+
+    public void setEvent7(String event7) {
+        this.event7 = event7;
+    }
+
+    public String getEvent8() {
+        return event8;
+    }
+
+    public void setEvent8(String event8) {
+        this.event8 = event8;
+    }
+
+    public String getEvent9() {
+        return event9;
+    }
+
+    public void setEvent9(String event9) {
+        this.event9 = event9;
+    }
+
+    public String getEvent10() {
+        return event10;
+    }
+
+    public void setEvent10(String event10) {
+        this.event10 = event10;
     }
 
     @Override
