@@ -108,16 +108,17 @@ public class PostbackHandler {
         if (parameters.containsKey("event8")) postBackEntity.setEvent8(parameters.get("event8"));
         if (parameters.containsKey("event9")) postBackEntity.setEvent9(parameters.get("event9"));
         if (parameters.containsKey("event10")) postBackEntity.setEvent10(parameters.get("event10"));
-        if (parameters.containsKey("add_event1")) postBackEntity.setEvent1(postBackEntity.getEvent1() + "+" + parameters.get("add_event1"));
-        if (parameters.containsKey("add_event2")) postBackEntity.setEvent2(postBackEntity.getEvent2() + "+" + parameters.get("add_event2"));
-        if (parameters.containsKey("add_event3")) postBackEntity.setEvent3(postBackEntity.getEvent3() + "+" + parameters.get("add_event3"));
-        if (parameters.containsKey("add_event4")) postBackEntity.setEvent4(postBackEntity.getEvent4() + "+" + parameters.get("add_event4"));
-        if (parameters.containsKey("add_event5")) postBackEntity.setEvent5(postBackEntity.getEvent5() + "+" + parameters.get("add_event5"));
-        if (parameters.containsKey("add_event6")) postBackEntity.setEvent6(postBackEntity.getEvent6() + "+" + parameters.get("add_event6"));
-        if (parameters.containsKey("add_event7")) postBackEntity.setEvent7(postBackEntity.getEvent7() + "+" + parameters.get("add_event7"));
-        if (parameters.containsKey("add_event8")) postBackEntity.setEvent8(postBackEntity.getEvent8() + "+" + parameters.get("add_event8"));
-        if (parameters.containsKey("add_event9")) postBackEntity.setEvent9(postBackEntity.getEvent9() + "+" + parameters.get("add_event9"));
-        if (parameters.containsKey("add_event10")) postBackEntity.setEvent10(postBackEntity.getEvent10() + "+" + parameters.get("add_event10"));
+        if (parameters.containsKey("add_event1")) postBackEntity.setAddEvent1(parameters.get("add_event1"));
+        if (parameters.containsKey("add_event2")) postBackEntity.setAddEvent2(parameters.get("add_event2"));
+        if (parameters.containsKey("add_event3")) postBackEntity.setAddEvent3(parameters.get("add_event3"));
+        if (parameters.containsKey("add_event4")) postBackEntity.setAddEvent4(parameters.get("add_event4"));
+        if (parameters.containsKey("add_event5")) postBackEntity.setAddEvent5(parameters.get("add_event5"));
+        if (parameters.containsKey("add_event6")) postBackEntity.setAddEvent6(parameters.get("add_event6"));
+        if (parameters.containsKey("add_event7")) postBackEntity.setAddEvent7(parameters.get("add_event7"));
+        if (parameters.containsKey("add_event8")) postBackEntity.setAddEvent8(parameters.get("add_event8"));
+        if (parameters.containsKey("add_event9")) postBackEntity.setAddEvent9(parameters.get("add_event9"));
+        if (parameters.containsKey("add_event10")) postBackEntity.setAddEvent10(parameters.get("add_event10"));
+
         if (parameters.containsKey("offerid")) postBackEntity.setOfferId(parameters.get("offerid"));
         if (parameters.containsKey("afid") && parameters.get("afid").matches("\\d+")) postBackEntity.setAfid(Integer.parseInt(parameters.get("afid")));
         if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+")) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
