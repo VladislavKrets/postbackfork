@@ -55,7 +55,16 @@ public class BinomTracker {
         if (!postBackEntity.getEvent8().isEmpty()) urlBuilder.append("&event8=").append(postBackEntity.getEvent8());
         if (!postBackEntity.getEvent9().isEmpty()) urlBuilder.append("&event9=").append(postBackEntity.getEvent9());
         if (!postBackEntity.getEvent10().isEmpty()) urlBuilder.append("&event10=").append(postBackEntity.getEvent10());
-
+        if (!postBackEntity.getAddEvent1().isEmpty()) urlBuilder.append("&add_event1=").append(postBackEntity.getAddEvent1());
+        if (!postBackEntity.getAddEvent2().isEmpty()) urlBuilder.append("&add_event2=").append(postBackEntity.getAddEvent2());
+        if (!postBackEntity.getAddEvent3().isEmpty()) urlBuilder.append("&add_event3=").append(postBackEntity.getAddEvent3());
+        if (!postBackEntity.getAddEvent4().isEmpty()) urlBuilder.append("&add_event4=").append(postBackEntity.getAddEvent4());
+        if (!postBackEntity.getAddEvent5().isEmpty()) urlBuilder.append("&add_event5=").append(postBackEntity.getAddEvent5());
+        if (!postBackEntity.getAddEvent6().isEmpty()) urlBuilder.append("&add_event6=").append(postBackEntity.getAddEvent6());
+        if (!postBackEntity.getAddEvent7().isEmpty()) urlBuilder.append("&add_event7=").append(postBackEntity.getAddEvent7());
+        if (!postBackEntity.getAddEvent8().isEmpty()) urlBuilder.append("&add_event8=").append(postBackEntity.getAddEvent8());
+        if (!postBackEntity.getAddEvent9().isEmpty()) urlBuilder.append("&add_event9=").append(postBackEntity.getAddEvent9());
+        if (!postBackEntity.getAddEvent10().isEmpty()) urlBuilder.append("&add_event10=").append(postBackEntity.getAddEvent10());
 
 
         //ToDo
