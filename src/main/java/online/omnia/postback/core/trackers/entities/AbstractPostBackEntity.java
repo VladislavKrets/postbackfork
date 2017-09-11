@@ -95,6 +95,26 @@ public abstract class AbstractPostBackEntity {
     private String event10;
     @Transient
     private String actionId;
+    @Transient
+    private String addEvent1;
+    @Transient
+    private String addEvent2;
+    @Transient
+    private String addEvent3;
+    @Transient
+    private String addEvent4;
+    @Transient
+    private String addEvent5;
+    @Transient
+    private String addEvent6;
+    @Transient
+    private String addEvent7;
+    @Transient
+    private String addEvent8;
+    @Transient
+    private String addEvent9;
+    @Transient
+    private String addEvent10;
     public AbstractPostBackEntity() {
         clickId = "";
         currency = "";
@@ -129,6 +149,17 @@ public abstract class AbstractPostBackEntity {
         event8 = "";
         event9 = "";
         event10 = "";
+        addEvent1 = "";
+        addEvent2 = "";
+        addEvent3 = "";
+        addEvent4 = "";
+        addEvent5 = "";
+        addEvent6 = "";
+        addEvent7 = "";
+        addEvent8 = "";
+        addEvent9 = "";
+        addEvent10 = "";
+
     }
 
     public AbstractPostBackEntity(int id, Date date, Time time, String prefix, String clickId, double sum, String currency,
@@ -488,6 +519,86 @@ public abstract class AbstractPostBackEntity {
 
     public void setEvent10(String event10) {
         this.event10 = event10;
+    }
+
+    public String getAddEvent1() {
+        return addEvent1;
+    }
+
+    public void setAddEvent1(String addEvent1) {
+        this.addEvent1 = addEvent1;
+    }
+
+    public String getAddEvent2() {
+        return addEvent2;
+    }
+
+    public void setAddEvent2(String addEvent2) {
+        this.addEvent2 = addEvent2;
+    }
+
+    public String getAddEvent3() {
+        return addEvent3;
+    }
+
+    public void setAddEvent3(String addEvent3) {
+        this.addEvent3 = addEvent3;
+    }
+
+    public String getAddEvent4() {
+        return addEvent4;
+    }
+
+    public void setAddEvent4(String addEvent4) {
+        this.addEvent4 = addEvent4;
+    }
+
+    public String getAddEvent5() {
+        return addEvent5;
+    }
+
+    public void setAddEvent5(String addEvent5) {
+        this.addEvent5 = addEvent5;
+    }
+
+    public String getAddEvent6() {
+        return addEvent6;
+    }
+
+    public void setAddEvent6(String addEvent6) {
+        this.addEvent6 = addEvent6;
+    }
+
+    public String getAddEvent7() {
+        return addEvent7;
+    }
+
+    public void setAddEvent7(String addEvent7) {
+        this.addEvent7 = addEvent7;
+    }
+
+    public String getAddEvent8() {
+        return addEvent8;
+    }
+
+    public void setAddEvent8(String addEvent8) {
+        this.addEvent8 = addEvent8;
+    }
+
+    public String getAddEvent9() {
+        return addEvent9;
+    }
+
+    public void setAddEvent9(String addEvent9) {
+        this.addEvent9 = addEvent9;
+    }
+
+    public String getAddEvent10() {
+        return addEvent10;
+    }
+
+    public void setAddEvent10(String addEvent10) {
+        this.addEvent10 = addEvent10;
     }
 
     @Override
