@@ -45,6 +45,18 @@ public class BinomTracker {
         urlBuilder.append("cnid=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
         if (postBackEntity.getSum() != 0) urlBuilder.append("&sm=").append(postBackEntity.getSum());
         if (!postBackEntity.getStatus().isEmpty()) urlBuilder.append("&cnst1=").append(postBackEntity.getStatus());
+        if (!postBackEntity.getEvent1().isEmpty()) urlBuilder.append("&event1=").append(postBackEntity.getEvent1());
+        if (!postBackEntity.getEvent2().isEmpty()) urlBuilder.append("&event2=").append(postBackEntity.getEvent2());
+        if (!postBackEntity.getEvent3().isEmpty()) urlBuilder.append("&event3=").append(postBackEntity.getEvent3());
+        if (!postBackEntity.getEvent4().isEmpty()) urlBuilder.append("&event4=").append(postBackEntity.getEvent4());
+        if (!postBackEntity.getEvent5().isEmpty()) urlBuilder.append("&event5=").append(postBackEntity.getEvent5());
+        if (!postBackEntity.getEvent6().isEmpty()) urlBuilder.append("&event6=").append(postBackEntity.getEvent6());
+        if (!postBackEntity.getEvent7().isEmpty()) urlBuilder.append("&event7=").append(postBackEntity.getEvent7());
+        if (!postBackEntity.getEvent8().isEmpty()) urlBuilder.append("&event8=").append(postBackEntity.getEvent8());
+        if (!postBackEntity.getEvent9().isEmpty()) urlBuilder.append("&event9=").append(postBackEntity.getEvent9());
+        if (!postBackEntity.getEvent10().isEmpty()) urlBuilder.append("&event10=").append(postBackEntity.getEvent10());
+
+
 
         //ToDo
         return urlBuilder.toString();
