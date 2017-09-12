@@ -115,7 +115,7 @@ public class MainController {
         try {
             System.out.println("Sending to binom");
             String answer = binomTracker.sendPostback(postBackEntity);
-            if (answer.equalsIgnoreCase("ok")) postBackEntity.setPostbackSend(1);
+            if (answer.split("\n")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
             FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
                     new Time(System.currentTimeMillis()), answer);
         } catch (NoClickIdException e) {

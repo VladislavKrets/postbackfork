@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class HttpMethodsUtils {
         }
         return "";
     }
-    public String getMethod(String url, Map<String, String> headers){
+    public List<String> getMethod(String url, Map<String, String> headers){
         if (!(url.startsWith("http://") || url.startsWith("https://"))) url = "https://" + url;
         HttpGet httpGet = null;
 
@@ -67,10 +68,11 @@ public class HttpMethodsUtils {
             logger.debug("Exception during executing get method");
             logger.debug(e.getMessage());
         }
-        return "";
+        return new ArrayList<>();
     }
 
-    private String getAnswer(HttpRequestBase http) throws IOException {
+    private List<String> getAnswer(HttpRequestBase http) throws IOException {
+        List<String> list = new ArrayList<>();
         System.out.println("Creating http client");
         CloseableHttpClient httpClient = HttpClients.createDefault();
         System.out.println("Creating response");
@@ -80,6 +82,7 @@ public class HttpMethodsUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        list.add(String.valueOf(response.getStatusLine().getStatusCode()));
         System.out.println("Opening reader");
         BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
         System.out.println("Creating answer line");
@@ -95,10 +98,11 @@ public class HttpMethodsUtils {
         reader.close();
         response.close();
         httpClient.close();
-        return answerBuilder.toString();
+        list.add(answerBuilder.toString());
+        return list;
     }
 
-    public String postMethod(String url, List<NameValuePair> nameValuePairs, Map<String, String> headers) throws IOException {
+    public List<String> postMethod(String url, List<NameValuePair> nameValuePairs, Map<String, String> headers) throws IOException {
         try {
             HttpPost httpPost = new HttpPost(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -110,6 +114,6 @@ public class HttpMethodsUtils {
             logger.debug("Exception during executing post method");
             logger.debug(e.getMessage());
         }
-        return "";
+        return new ArrayList<>();
     }
 }

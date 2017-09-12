@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,10 +34,10 @@ public class AffiseTracker {
         System.out.println("Url built for affise:\n" + url);
 
         HttpMethodsUtils httpMethodsUtils = new HttpMethodsUtils();
-        String answer = httpMethodsUtils.getMethod(url, headers);
-        System.out.println(answer);
+        List<String> answer = httpMethodsUtils.getMethod(url, headers);
+        System.out.println(answer.get(1));
         //ToDo
-        return url + "\n" +answer;
+        return url + "\n" +answer.get(1);
     }
 
     private String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {

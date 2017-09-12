@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,9 +33,9 @@ public class BinomTracker {
             e.printStackTrace();
         }
         HttpMethodsUtils httpMethodsUtils = new HttpMethodsUtils();
-        String answer = httpMethodsUtils.getMethod(url, headers);
-        System.out.println(answer);
-        return url + "\n" + answer;
+        List<String> answer = httpMethodsUtils.getMethod(url, headers);
+        System.out.println(answer.get(0));
+        return url + "\n" + answer.get(0);
 
     }
 
