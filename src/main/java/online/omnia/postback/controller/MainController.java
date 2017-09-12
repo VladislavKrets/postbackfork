@@ -56,7 +56,9 @@ public class MainController {
             System.out.println("Postback is FULL");
             postBackEntity.setDuplicate("FULL");
         }
-
+        if (postbackHandler.isEventFilled(postBackEntity)) {
+            postBackEntity.setDuplicate("PARTIAL");
+        }
         if (postBackEntity.getPrefix() == null) {
             System.out.println("No prefix or prefix is wrong");
             System.out.println("Writing to error_log");
@@ -112,8 +114,8 @@ public class MainController {
                 .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
         try {
             System.out.println("Sending to binom");
-
             String answer = binomTracker.sendPostback(postBackEntity);
+            if (answer.equalsIgnoreCase("ok")) postBackEntity.setPostbackSend(1);
             FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
                     new Time(System.currentTimeMillis()), answer);
         } catch (NoClickIdException e) {

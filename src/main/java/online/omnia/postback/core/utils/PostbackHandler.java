@@ -125,14 +125,20 @@ public class PostbackHandler {
         else postBackEntity.setPostbackSend(2);
         postBackEntity.setDuplicate("original");
 
-        if (isPostbackPartial(postBackEntity.getClickId())){
+        if (isPostbackPartial(postBackEntity.getClickId()) && isEventFilled(postBackEntity)){
             System.out.println("is postback PARTIAl");
             postBackEntity.setDuplicate("PARTIAL");
         }
 
         return postBackEntity;
     }
-
+    public boolean isEventFilled(PostBackEntity postBackEntity) {
+        return !postBackEntity.getEvent1().isEmpty() || !postBackEntity.getEvent2().isEmpty()
+                || !postBackEntity.getEvent3().isEmpty() || !postBackEntity.getEvent4().isEmpty()
+                || !postBackEntity.getEvent5().isEmpty() || !postBackEntity.getEvent6().isEmpty()
+                || !postBackEntity.getEvent7().isEmpty() || !postBackEntity.getEvent8().isEmpty()
+                || !postBackEntity.getEvent9().isEmpty() || !postBackEntity.getEvent10().isEmpty();
+    }
     public ErrorPostBackEntity createError(PostBackEntity postBackEntity) {
         ErrorPostBackEntity errorPostBackEntity = new ErrorPostBackEntity();
         errorPostBackEntity.setActionId(postBackEntity.getActionId());
