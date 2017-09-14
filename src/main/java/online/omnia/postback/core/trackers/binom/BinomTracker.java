@@ -34,8 +34,8 @@ public class BinomTracker {
         }
         HttpMethodsUtils httpMethodsUtils = new HttpMethodsUtils();
         List<String> answer = httpMethodsUtils.getMethod(url, headers);
-        System.out.println(answer.get(0));
-        return url + "\n" + answer.get(0);
+        //System.out.println(answer.get(0));
+        return url + "\n" + (answer.size() == 0 ? "201" : answer.get(0));
 
     }
 

@@ -88,7 +88,6 @@ public class HttpMethodsUtils {
         System.out.println("Creating answer line");
         StringBuilder answerBuilder = new StringBuilder();
         String line;
-
         while ((line = reader.readLine()) != null) {
             answerBuilder.append(line);
         }
