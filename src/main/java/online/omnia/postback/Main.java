@@ -16,8 +16,6 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) throws IOException {
         Map<String, String> properties = FileWorkingUtils.iniFileReader();
-        System.out.println("initializing db");
-        MySQLDaoImpl.getInstance();
         ServerSocket serverSocket = new ServerSocket(Integer.parseInt(properties.get("port")));
         Thread thread;
         Socket socket;

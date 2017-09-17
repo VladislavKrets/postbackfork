@@ -1,6 +1,7 @@
 package online.omnia.postback.core.threads;
 
 import online.omnia.postback.controller.MainController;
+import online.omnia.postback.queue.QueueWriter;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -51,12 +52,13 @@ public class PostbackHandlerThread implements Runnable{
 
             }
             System.out.println("Creating new postback controller");
-            MainController controller = new MainController();
-            System.out.println("sending postback to controller");
-            String answer = controller.sendPostback(host + urlBuilder.toString());
+            //MainController controller = new MainController();
+            //System.out.println("sending postback to controller");
+            //String answer = controller.sendPostback(host + urlBuilder.toString());
+            QueueWriter.writeUrl(host + urlBuilder.toString());
             System.out.println("Open output stream");
             OutputStream outputStream = socket.getOutputStream();
-            outputStream.write(answer.getBytes("UTF-8"));
+            outputStream.write("HTTP/1.1 200 OK\r\n".getBytes("UTF-8"));
             outputStream.write("Status: 200\r\n".getBytes("UTF-8"));
             outputStream.write("Server: nginx\r\n".getBytes("UTF-8"));
             outputStream.write("Content-Type: text/html\r\n".getBytes("UTF-8"));
