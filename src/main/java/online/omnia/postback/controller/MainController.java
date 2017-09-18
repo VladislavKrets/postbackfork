@@ -59,6 +59,10 @@ public class MainController {
         if (postbackHandler.isEventFilled(postBackEntity)) {
             postBackEntity.setDuplicate("PARTIAL");
         }
+        if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) == null) {
+            postBackEntity.setAfid(2);
+        }
+
         if (postBackEntity.getPrefix() == null) {
             System.out.println("No prefix or prefix is wrong");
             System.out.println("Writing to error_log");
@@ -83,6 +87,12 @@ public class MainController {
                 return "HTTP/1.1 201 error\r\n";
             }
             System.out.println("Done");
+            return "HTTP/1.1 200 OK\r\n";
+        } else if (isAllEventsEmpty(postBackEntity) && !postBackEntity.getClickId().isEmpty()
+                && !postBackEntity.getTransactionId().isEmpty()) {
+            FileWorkingUtils.writePostback(new Date(currentDate.getTime()),
+                    new Time(currentDate.getTime()), postbackURL);
+            MySQLDaoImpl.getInstance().addPostback(postBackEntity);
             return "HTTP/1.1 200 OK\r\n";
         } else {
             System.out.println("Writing to postback_log");
@@ -158,6 +168,14 @@ public class MainController {
         if (!postBackEntity.getAddEvent8().isEmpty()) postBackEntity.setEvent8("+" + postBackEntity.getAddEvent8());
         if (!postBackEntity.getAddEvent9().isEmpty()) postBackEntity.setEvent9("+" + postBackEntity.getAddEvent9());
         if (!postBackEntity.getAddEvent10().isEmpty()) postBackEntity.setEvent10("+" + postBackEntity.getAddEvent10());
+    }
+
+    private boolean isAllEventsEmpty(PostBackEntity postBackEntity) {
+        return postBackEntity.getEvent1().isEmpty() && postBackEntity.getEvent2().isEmpty()
+                && postBackEntity.getEvent3().isEmpty() && postBackEntity.getEvent4().isEmpty()
+                && postBackEntity.getEvent5().isEmpty() && postBackEntity.getEvent6().isEmpty()
+                && postBackEntity.getEvent7().isEmpty() && postBackEntity.getEvent8().isEmpty()
+                && postBackEntity.getEvent9().isEmpty() && postBackEntity.getEvent10().isEmpty();
     }
 
     private boolean isAffidInAffiliate(int affid) {
