@@ -39,7 +39,7 @@ public class BinomTracker {
 
     }
 
-    private String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
+    public String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "click.php?");
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
