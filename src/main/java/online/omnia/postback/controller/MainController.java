@@ -24,11 +24,11 @@ public class MainController {
     private PostbackHandler postbackHandler;
 
     public MainController() {
-        currentDate = new java.util.Date(System.currentTimeMillis());
         postbackHandler = new PostbackHandler();
     }
 
     public String sendPostback(String postbackURL) {
+        currentDate = new java.util.Date(System.currentTimeMillis());
         Map<String, String> parameters = postbackHandler.getPostbackParameters(postbackURL);
         System.out.println("Parameters have been got");
         if (parameters.isEmpty()) {
@@ -80,8 +80,8 @@ public class MainController {
             try {
                 System.out.println("sending postback");
                 String answer = tracker.sendPostback(postBackEntity);
-                FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
-                        new Time(System.currentTimeMillis()), answer);
+                FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
+                        new Time(currentDate.getTime()), answer);
             } catch (NoClickIdException e) {
                 System.out.println("Exception. ClickId is null");
                 return "HTTP/1.1 201 error\r\n";
@@ -125,10 +125,10 @@ public class MainController {
         try {
             System.out.println("Sending to binom");
             String answer = binomTracker.sendPostback(postBackEntity);
-            System.out.println(answer.split("\n")[1]);
-            if (answer.split("\n")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
-            FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
-                    new Time(System.currentTimeMillis()), answer);
+            System.out.println(answer.split(" ")[1]);
+            if (answer.split(" ")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
+            FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
+                    new Time(currentDate.getTime()), answer);
         } catch (NoClickIdException e) {
             e.printStackTrace();
         }
@@ -149,8 +149,8 @@ public class MainController {
         try {
             System.out.println("Sending postback");
             String answer = tracker.sendPostback(postBackEntity);
-            FileWorkingUtils.writePostback(new java.sql.Date(System.currentTimeMillis()),
-                    new Time(System.currentTimeMillis()), answer);
+            FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
+                    new Time(currentDate.getTime()), answer);
             System.out.println(postBackEntity);
         } catch (NoClickIdException e) {
             e.printStackTrace();

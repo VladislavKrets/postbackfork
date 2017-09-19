@@ -37,7 +37,7 @@ public class AffiseTracker {
         List<String> answer = httpMethodsUtils.getMethod(url, headers);
         System.out.println(answer.get(1));
         //ToDo
-        return url + "\n" +answer.get(1);
+        return url + " answer=" +answer.get(1);
     }
 
     public String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
