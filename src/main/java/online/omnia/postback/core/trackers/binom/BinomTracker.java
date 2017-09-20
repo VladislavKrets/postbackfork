@@ -45,7 +45,7 @@ public class BinomTracker {
             throw new NoClickIdException();
         urlBuilder.append("cnid=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
         if (postBackEntity.getSum() != 0) urlBuilder.append("&sm=").append(postBackEntity.getSum());
-        if (!postBackEntity.getStatus().isEmpty()) urlBuilder.append("&cnst1=").append(postBackEntity.getStatus());
+        if (!postBackEntity.getStatus().isEmpty()) urlBuilder.append("&cnst1=").append(URLEncoder.encode(postBackEntity.getStatus(), "UTF-8"));
         if (!postBackEntity.getEvent1().isEmpty()) urlBuilder.append("&event1=").append(postBackEntity.getEvent1());
         if (!postBackEntity.getEvent2().isEmpty()) urlBuilder.append("&event2=").append(postBackEntity.getEvent2());
         if (!postBackEntity.getEvent3().isEmpty()) urlBuilder.append("&event3=").append(postBackEntity.getEvent3());

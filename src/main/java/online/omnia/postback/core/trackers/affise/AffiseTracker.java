@@ -47,7 +47,7 @@ public class AffiseTracker {
         if (!postBackEntity.getGoal().isEmpty()) urlBuilder.append("&goal=").append(postBackEntity.getGoal());
         if (postBackEntity.getSum() != 0) urlBuilder.append("&sum=").append(postBackEntity.getSum());
         if (!postBackEntity.getIpAddress().isEmpty()) urlBuilder.append("&ip=").append(URLEncoder.encode(postBackEntity.getIpAddress(), "UTF-8"));
-        if (!postBackEntity.getStatus().isEmpty()) urlBuilder.append("&status=").append(postBackEntity.getStatus());
+        if (!postBackEntity.getStatus().isEmpty()) urlBuilder.append("&status=").append(URLEncoder.encode(postBackEntity.getStatus(), "UTF-8"));
         if (!postBackEntity.getCurrency().isEmpty()) urlBuilder.append("&currency=").append(URLEncoder.encode(postBackEntity.getCurrency(), "UTF-8"));
         if (!postBackEntity.getT1().isEmpty()) urlBuilder.append("&custom_field1=").append(URLEncoder.encode(postBackEntity.getT1(), "UTF-8"));
         if (!postBackEntity.getT2().isEmpty()) urlBuilder.append("&custom_field2=").append(URLEncoder.encode(postBackEntity.getT2(), "UTF-8"));
