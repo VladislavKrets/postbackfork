@@ -115,6 +115,8 @@ public abstract class AbstractPostBackEntity {
     private String addEvent9;
     @Transient
     private String addEvent10;
+    @Column(name = "exchange")
+    private int exchange;
     public AbstractPostBackEntity() {
         clickId = "";
         currency = "";
@@ -614,4 +616,11 @@ public abstract class AbstractPostBackEntity {
         this.duplicate = duplicate;
     }
 
+    public int getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(int exchange) {
+        this.exchange = exchange;
+    }
 }

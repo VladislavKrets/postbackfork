@@ -29,6 +29,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(TrackerEntity.class)
                 .addAnnotatedClass(AffiliatesEntity.class)
                 .addAnnotatedClass(ErrorPostBackEntity.class)
+                .addAnnotatedClass(ExchangeEntity.class)
                 .configure("/hibernate.cfg.xml");
         /*secondDbConfiguration  = new Configuration()
                 .addAnnotatedClass(PostBackEntity.class)
