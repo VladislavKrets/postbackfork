@@ -2,6 +2,7 @@ package online.omnia.postback.core.dao;
 
 import online.omnia.postback.core.trackers.entities.*;
 import online.omnia.postback.core.utils.FileWorkingUtils;
+import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -56,6 +57,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 break;
             } catch (PersistenceException e) {
                 try {
+                    e.printStackTrace();
                     System.out.println("Can't connect to master db");
                     System.out.println("Waiting for 30 seconds");
                     Thread.sleep(30000);
@@ -159,16 +161,43 @@ public class MySQLDaoImpl implements MySQLDao {
         }
         session.close();
     }
-    public ExchangeEntity getExchange(String currency, Date date) {
+    public CurrencyEntity getCurrency(String currency) {
+        Session session = null;
+        CurrencyEntity currencyEntity = null;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                currencyEntity = session.createQuery("from CurrencyEntity where code=:currency", CurrencyEntity.class)
+                        .setParameter("currency", currency)
+                        .getSingleResult();
+                break;
+            }
+            catch (NoResultException e) {
+                currencyEntity = null;
+            }
+            catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        session.close();
+        return currencyEntity;
+    }
+    public ExchangeEntity getExchange(int id) {
         Session session = null;
         ExchangeEntity exchangeEntity = null;
         while (true) {
             try {
                 session = masterDbSessionFactory.openSession();
-                exchangeEntity = session.createQuery("from ExchangeEntity where currency=:currency and date=:date", ExchangeEntity.class)
-
-                        .setParameter("currency", currency)
+                exchangeEntity = session.createQuery("from ExchangeEntity where currency_id=:currencyId and time=(select max(time) from ExchangeEntity where currency_id=:currencyId)", ExchangeEntity.class)
+                        .setParameter("currencyId", id)
                         .getSingleResult();
+
                 break;
             } catch (PersistenceException e) {
                 try {
@@ -180,6 +209,8 @@ public class MySQLDaoImpl implements MySQLDao {
                 }
             }
         }
+        session.close();
+        return exchangeEntity;
     }
     @Override
     public List<AdvertsEntity> getAllAdverts() {

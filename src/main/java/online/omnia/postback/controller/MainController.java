@@ -4,9 +4,7 @@ import online.omnia.postback.core.dao.MySQLDaoImpl;
 import online.omnia.postback.core.exceptions.NoClickIdException;
 import online.omnia.postback.core.trackers.affise.AffiseTracker;
 import online.omnia.postback.core.trackers.binom.BinomTracker;
-import online.omnia.postback.core.trackers.entities.AffiliatesEntity;
-import online.omnia.postback.core.trackers.entities.AbstractPostBackEntity;
-import online.omnia.postback.core.trackers.entities.PostBackEntity;
+import online.omnia.postback.core.trackers.entities.*;
 import online.omnia.postback.core.utils.FileWorkingUtils;
 import online.omnia.postback.core.utils.PostbackHandler;
 import org.apache.log4j.Logger;
@@ -72,7 +70,6 @@ public class MainController {
             postBackEntity.setPrefix("333");
             postBackEntity.setAfid(2);
             System.out.println("Adding to db");
-            MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
 
             System.out.println("Sending to affise");
             AffiseTracker tracker = new AffiseTracker(MySQLDaoImpl.getInstance()
@@ -82,6 +79,8 @@ public class MainController {
                 String answer = tracker.sendPostback(postBackEntity);
                 FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
                         new Time(currentDate.getTime()), answer);
+                setExchange(postBackEntity);
+                MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
             } catch (NoClickIdException e) {
                 System.out.println("Exception. ClickId is null");
                 return "HTTP/1.1 201 error\r\n";
@@ -134,6 +133,7 @@ public class MainController {
         }
         System.out.println("Adding to db");
         addingEventToPostback(postBackEntity);
+        setExchange(postBackEntity);
         MySQLDaoImpl.getInstance().addPostback(postBackEntity);
 
     }
@@ -145,18 +145,28 @@ public class MainController {
         System.out.println(postBackEntity.getAfid());
         System.out.println("Adding to db");
 
-        MySQLDaoImpl.getInstance().addPostback(postBackEntity);
         try {
             System.out.println("Sending postback");
             String answer = tracker.sendPostback(postBackEntity);
             FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), answer);
             System.out.println(postBackEntity);
+            setExchange(postBackEntity);
+            MySQLDaoImpl.getInstance().addPostback(postBackEntity);
         } catch (NoClickIdException e) {
             e.printStackTrace();
         }
     }
-
+    private void setExchange(PostBackEntity postBackEntity) {
+        CurrencyEntity currencyEntity = MySQLDaoImpl.getInstance().getCurrency(postBackEntity.getCurrency());
+        if (currencyEntity == null) currencyEntity = MySQLDaoImpl.getInstance().getCurrency("USD");
+        ExchangeEntity exchangeEntity = MySQLDaoImpl.getInstance().getExchange(currencyEntity.getId());
+        double sum = (postBackEntity.getSum() / exchangeEntity.getRate()) * 100;
+        int tempSum = (int) sum;
+        sum = tempSum / 100.0;
+        postBackEntity.setSum(sum);
+        postBackEntity.setExchange(exchangeEntity.getId());
+    }
     private void addingEventToPostback(PostBackEntity postBackEntity) {
         if (!postBackEntity.getAddEvent1().isEmpty()) postBackEntity.setEvent1("+" + postBackEntity.getAddEvent1());
         if (!postBackEntity.getAddEvent2().isEmpty()) postBackEntity.setEvent2("+" + postBackEntity.getAddEvent2());
