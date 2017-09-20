@@ -84,6 +84,7 @@ public class PostbackHandler {
         if (parameters.containsKey("advname")) postBackEntity.setAdvName(parameters.get("advname"));
         if (parameters.containsKey("offername")) postBackEntity.setOfferName(parameters.get("offername"));
         if (parameters.containsKey("transactionid")) postBackEntity.setTransactionId(parameters.get("transactionid"));
+        if (parameters.containsKey("txid")) postBackEntity.setTransactionId(parameters.get("txid"));
         if (parameters.containsKey("idfa")) postBackEntity.setIDFA(parameters.get("idfa"));
         if (parameters.containsKey("gaid")) postBackEntity.setGaId("gaid");
         if (parameters.containsKey("ip")) postBackEntity.setIpAddress(parameters.get("ip"));
@@ -129,7 +130,10 @@ public class PostbackHandler {
             System.out.println("is postback PARTIAl");
             postBackEntity.setDuplicate("PARTIAL");
         }
-
+        if (MySQLDaoImpl.getInstance().getPostbackByClickIdTransactionIdStatus(postBackEntity.getClickId(),
+                postBackEntity.getTransactionId(), postBackEntity.getStatus()) != null) {
+            postBackEntity.setDuplicate("PARTIAL");
+        }
         return postBackEntity;
     }
     public boolean isEventFilled(PostBackEntity postBackEntity) {
