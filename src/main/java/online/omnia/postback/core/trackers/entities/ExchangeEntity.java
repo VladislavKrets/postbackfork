@@ -17,8 +17,10 @@ public class ExchangeEntity {
     private int id;
     @Column(name = "time")
     private Date time;
-    @Column(name = "currency")
-    private String currency;
+    @Column(name = "currency_id")
+    private int currencyId;
+    @Column(name = "count")
+    private int count;
     @Column(name = "rate")
     private double rate;
 
@@ -30,11 +32,15 @@ public class ExchangeEntity {
         return time;
     }
 
-    public String getCurrency() {
-        return currency;
+    public int getCurrency() {
+        return currencyId;
     }
 
     public double getRate() {
         return rate;
+    }
+
+    public int getCount() {
+        return count;
     }
 }

@@ -9,6 +9,7 @@ import org.hibernate.cfg.Configuration;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(AffiliatesEntity.class)
                 .addAnnotatedClass(ErrorPostBackEntity.class)
                 .addAnnotatedClass(ExchangeEntity.class)
+                .addAnnotatedClass(CurrencyEntity.class)
                 .configure("/hibernate.cfg.xml");
         /*secondDbConfiguration  = new Configuration()
                 .addAnnotatedClass(PostBackEntity.class)
@@ -157,7 +159,28 @@ public class MySQLDaoImpl implements MySQLDao {
         }
         session.close();
     }
+    public ExchangeEntity getExchange(String currency, Date date) {
+        Session session = null;
+        ExchangeEntity exchangeEntity = null;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                exchangeEntity = session.createQuery("from ExchangeEntity where currency=:currency and date=:date", ExchangeEntity.class)
 
+                        .setParameter("currency", currency)
+                        .getSingleResult();
+                break;
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
     @Override
     public List<AdvertsEntity> getAllAdverts() {
 
