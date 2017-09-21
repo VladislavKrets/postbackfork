@@ -16,7 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by lollipop on 12.07.2017.
+ * Class realizes working with db
+ * getting and adding postbacks and invalid postbacks
+ * getting trackers
+ * getting currency and exchange
+ * getting trackers
  */
 public class MySQLDaoImpl implements MySQLDao {
     private static Configuration masterDbConfiguration;
@@ -91,6 +95,12 @@ public class MySQLDaoImpl implements MySQLDao {
         return secondDbSessionFactory;
     }
 
+    /**
+     * Method gets event from db
+     * @param status postback status
+     * @param advName postback advname
+     * @return the last event whis is in db
+     */
     public StatusEventsEntity getEvent(String status, String advName) {
         Session session = null;
         List<StatusEventsEntity> statusEventsEntity = null;
@@ -116,6 +126,11 @@ public class MySQLDaoImpl implements MySQLDao {
         }
     }
 
+    /**
+     * Method gets postback by transactionid from db
+     * @param transactionId postback transactionid
+     * @return entity of postback
+     */
     public PostBackEntity getPostbackByTransactionId(String transactionId) {
         if (transactionId == null) return null;
         Session session = null;
@@ -143,6 +158,11 @@ public class MySQLDaoImpl implements MySQLDao {
         session.close();
         return postBackEntity;
     }
+
+    /**
+     * Method adds invalid postback to db
+     * @param errorPostBackEntity entity of invalid postback
+     */
     public synchronized void addErrorPostback(ErrorPostBackEntity errorPostBackEntity) {
         Session session = null;
         while (true) {
@@ -164,6 +184,11 @@ public class MySQLDaoImpl implements MySQLDao {
         }
         session.close();
     }
+
+    /**
+     * Method adds postback to db
+     * @param postBackEntity entity which we get after parsing the url
+     */
     @Override
     public synchronized void addPostback(PostBackEntity postBackEntity) {
         Session session = null;
@@ -188,6 +213,12 @@ public class MySQLDaoImpl implements MySQLDao {
         }
         session.close();
     }
+
+    /**
+     * Method gets CurrencyEntity by currency from db
+     * @param currency gets from postback for exchanging
+     * @return entity of curency from db
+     */
     public CurrencyEntity getCurrency(String currency) {
         Session session = null;
         CurrencyEntity currencyEntity = null;
@@ -215,6 +246,12 @@ public class MySQLDaoImpl implements MySQLDao {
         session.close();
         return currencyEntity;
     }
+
+    /**
+     *
+     * @param id of currency entity
+     * @return exchange entity
+     */
     public ExchangeEntity getExchange(int id) {
         Session session = null;
         ExchangeEntity exchangeEntity = null;
@@ -239,6 +276,11 @@ public class MySQLDaoImpl implements MySQLDao {
         session.close();
         return exchangeEntity;
     }
+
+    /**
+     * Method gets adverts from db
+     * @return list of adverts
+     */
     @Override
     public List<AdvertsEntity> getAllAdverts() {
 
@@ -264,6 +306,10 @@ public class MySQLDaoImpl implements MySQLDao {
         return advertsEntityList;
     }
 
+    /**
+     * Method gets trackers of db
+     * @return list of trackers
+     */
     @Override
     public List<TrackerEntity> getTrackers() {
         Session session = null;
@@ -287,6 +333,10 @@ public class MySQLDaoImpl implements MySQLDao {
         return trackerEntityList;
     }
 
+    /**
+     * Method gets affiliates from db
+     * @return list affiliates
+     */
     @Override
     public List<AffiliatesEntity> getAffiliates() {
         Session session = null;
@@ -310,6 +360,11 @@ public class MySQLDaoImpl implements MySQLDao {
         return affiliates;
     }
 
+    /**
+     * Method gets affiliate by afid from db
+     * @param afid parameter from postback
+     * @return affilliate
+     */
     @Override
     public AffiliatesEntity getAffiliateByAffid(int afid) {
         AffiliatesEntity affiliate = null;
@@ -338,6 +393,11 @@ public class MySQLDaoImpl implements MySQLDao {
         return affiliate;
     }
 
+    /**
+     * Method gets postback by clickid
+     * @param clickId parameter from postback
+     * @return postback entity
+     */
     @Override
     public PostBackEntity getPostbackByClickId(String clickId) {
 
@@ -374,6 +434,11 @@ public class MySQLDaoImpl implements MySQLDao {
         return postBackEntity;
     }
 
+    /**
+     * Method gets postback from db by url
+     * @param fullUrl url of postback
+     * @return postback
+     */
     @Override
     public PostBackEntity getPostbackByFullUrl(String fullUrl) {
         Session session = null;
@@ -409,6 +474,14 @@ public class MySQLDaoImpl implements MySQLDao {
         session.close();
         return postBackEntity;
     }
+
+    /**
+     * Method gets postback by clickid, transactionid and status from db
+     * @param clickId postback parameter
+     * @param transactionId postback parameter
+     * @param status postback parameter
+     * @return postback
+     */
     public PostBackEntity getPostbackByClickIdTransactionIdStatus(String clickId, String transactionId, String status) {
         Session session = null;
         if (clickId.isEmpty() || transactionId.isEmpty() || status.isEmpty()) return null;
@@ -437,6 +510,12 @@ public class MySQLDaoImpl implements MySQLDao {
             }
         }
     }
+
+    /**
+     * Method gets tracker by prefix from db
+     * @param prefix postback parameter
+     * @return tracker
+     */
     @Override
     public TrackerEntity getTrackerByPrefix(String prefix) {
         Session session = null;
