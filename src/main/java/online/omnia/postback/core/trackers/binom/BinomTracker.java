@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by lollipop on 12.07.2017.
+ * Class which sends postback to binom
  */
 public class BinomTracker {
     private String baseUrl;
@@ -24,6 +24,12 @@ public class BinomTracker {
         headers = new HashMap<>();
     }
 
+    /**
+     * Method forms url and sends postback to binom
+     * @param postBackEntity entity which we get after parsing the url
+     * @return server answer
+     * @throws NoClickIdException when postback doesn't contain clickid
+     */
     public String sendPostback(AbstractPostBackEntity postBackEntity) throws NoClickIdException {
         String url = null;
         try {
@@ -34,11 +40,17 @@ public class BinomTracker {
         }
         HttpMethodsUtils httpMethodsUtils = new HttpMethodsUtils();
         List<String> answer = httpMethodsUtils.getMethod(url, headers);
-        //System.out.println(answer.get(0));
         return url + " answer=" + (answer.size() == 0 ? "201" : answer.get(0));
 
     }
 
+    /**
+     * Method which formes url for sending to binom
+     * @param postBackEntity entity which we get after parsing the url
+     * @return formed url
+     * @throws NoClickIdException when postback doesn't contain clickid
+     * @throws UnsupportedEncodingException when url encoding unsuccessful
+     */
     public String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
         StringBuilder urlBuilder = new StringBuilder(baseUrl + "click.php?");
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
