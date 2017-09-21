@@ -119,6 +119,7 @@ public class MainController {
     public void binomHandler(PostBackEntity postBackEntity, PostbackHandler postbackHandler) {
         System.out.println("Creating affise tracker entity");
         System.out.println("Creating binom entity");
+        checkPostbackStatus(postBackEntity);
         BinomTracker binomTracker = new BinomTracker(MySQLDaoImpl.getInstance()
                 .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
         try {
@@ -157,6 +158,91 @@ public class MainController {
             e.printStackTrace();
         }
     }
+    private void checkPostbackStatus(PostBackEntity postBackEntity) {
+        if (postBackEntity.getStatus().isEmpty() || postBackEntity.getAdvName().isEmpty() || postBackEntity.getSum() == 0) return;
+        StatusEventsEntity statusEventsEntity = MySQLDaoImpl.getInstance()
+                .getEvent(postBackEntity.getStatus(), postBackEntity.getAdvName());
+        if (statusEventsEntity == null) return;
+        chooseEvent(postBackEntity, statusEventsEntity);
+        postBackEntity.setDuplicate("original");
+    }
+
+    private void chooseEvent(PostBackEntity postBackEntity, StatusEventsEntity statusEventsEntity) {
+        int event;
+        switch (statusEventsEntity.getEventName()) {
+            case "event1":
+                if (!postBackEntity.getEvent1().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent1());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent1(String.valueOf(event));
+                } else postBackEntity.setEvent1(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event2":
+                if (!postBackEntity.getEvent2().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent2());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent2(String.valueOf(event));
+                } else postBackEntity.setEvent2(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event3":
+                if (!postBackEntity.getEvent3().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent3());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent3(String.valueOf(event));
+                } else postBackEntity.setEvent3(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event4":
+                if (!postBackEntity.getEvent4().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent4());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent4(String.valueOf(event));
+                } else postBackEntity.setEvent4(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event5":
+                if (!postBackEntity.getEvent5().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent5());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent5(String.valueOf(event));
+                } else postBackEntity.setEvent5(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event6":
+                if (!postBackEntity.getEvent6().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent6());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent6(String.valueOf(event));
+                } else postBackEntity.setEvent6(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event7":
+                if (!postBackEntity.getEvent7().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent7());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent7(String.valueOf(event));
+                } else postBackEntity.setEvent7(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event8":
+                if (!postBackEntity.getEvent8().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent8());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent8(String.valueOf(event));
+                } else postBackEntity.setEvent8(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event9":
+                if (!postBackEntity.getEvent9().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent9());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent9(String.valueOf(event));
+                } else postBackEntity.setEvent9(String.valueOf((int) postBackEntity.getSum()));
+                break;
+            case "event10":
+                if (!postBackEntity.getEvent10().isEmpty()) {
+                    event = Integer.parseInt(postBackEntity.getEvent10());
+                    event += postBackEntity.getSum();
+                    postBackEntity.setEvent10(String.valueOf(event));
+                } else postBackEntity.setEvent10(String.valueOf((int) postBackEntity.getSum()));
+                break;
+        }
+    }
+
     private void setExchange(PostBackEntity postBackEntity) {
         CurrencyEntity currencyEntity = MySQLDaoImpl.getInstance().getCurrency(postBackEntity.getCurrency());
         if (currencyEntity == null) currencyEntity = MySQLDaoImpl.getInstance().getCurrency("USD");

@@ -10,6 +10,7 @@ import org.hibernate.cfg.Configuration;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(ErrorPostBackEntity.class)
                 .addAnnotatedClass(ExchangeEntity.class)
                 .addAnnotatedClass(CurrencyEntity.class)
+                .addAnnotatedClass(StatusEventsEntity.class)
                 .configure("/hibernate.cfg.xml");
         /*secondDbConfiguration  = new Configuration()
                 .addAnnotatedClass(PostBackEntity.class)
@@ -89,6 +91,30 @@ public class MySQLDaoImpl implements MySQLDao {
         return secondDbSessionFactory;
     }
 
+    public StatusEventsEntity getEvent(String status, String advName) {
+        Session session = null;
+        List<StatusEventsEntity> statusEventsEntity = null;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                statusEventsEntity = session.createQuery("from StatusEventsEntity where status=:status and advname=:advName", StatusEventsEntity.class)
+                        .setParameter("status", status)
+                        .setParameter("advName", advName)
+                        .getResultList();
+                if (statusEventsEntity.isEmpty()) return null;
+                return statusEventsEntity.get(statusEventsEntity.size() - 1);
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+        }
+    }
 
     public PostBackEntity getPostbackByTransactionId(String transactionId) {
         if (transactionId == null) return null;
@@ -97,7 +123,6 @@ public class MySQLDaoImpl implements MySQLDao {
         while (true) {
             try {
                 session = masterDbSessionFactory.openSession();
-                postBackEntity = null;
                 try {
                     postBackEntity = session.createQuery("from PostBackEntity where transactionid=:transactionid", PostBackEntity.class)
                             .setParameter("transactionid", transactionId).getSingleResult();
@@ -151,6 +176,8 @@ public class MySQLDaoImpl implements MySQLDao {
                 break;
             } catch (PersistenceException e) {
                 try {
+                    FileWorkingUtils.writeErrorPostback(new java.sql.Date(System.currentTimeMillis()),
+                            new Time(System.currentTimeMillis()), postBackEntity.getFullURL());
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
                     Thread.sleep(30000);
@@ -221,7 +248,7 @@ public class MySQLDaoImpl implements MySQLDao {
         while (true) {
             try {
                 session = masterDbSessionFactory.openSession();
-                advertsEntityList = session.createQuery("from Adverts", AdvertsEntity.class).getResultList();
+                advertsEntityList = session.createQuery("from AdvertsEntity", AdvertsEntity.class).getResultList();
                 break;
             } catch (PersistenceException e) {
                 try {
