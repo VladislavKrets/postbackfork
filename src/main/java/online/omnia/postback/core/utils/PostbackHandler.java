@@ -12,10 +12,14 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * Created by lollipop on 11.07.2017.
+ * Class which can parse url and create PostbackEntities
  */
 public class PostbackHandler {
-
+    /**
+     * Method parses url and gets postback parameters
+     * @param url of postback
+     * @return map of postback parameters
+     */
     public Map<String, String> getPostbackParameters(String url){
 
         System.out.println(url);
@@ -58,6 +62,12 @@ public class PostbackHandler {
         System.out.println("Parameters have been got");
         return parametersMap;
     }
+
+    /**
+     * Creates PostBackEntity using url parameters
+     * @param parameters map which we get after parsing url
+     * @return postback entity
+     */
     public PostBackEntity fillPostback(Map<String, String> parameters) {
         PostBackEntity postBackEntity = new PostBackEntity();
 
@@ -136,6 +146,12 @@ public class PostbackHandler {
         }
         return postBackEntity;
     }
+
+    /**
+     * Method checks if events in postback are empty
+     * @param postBackEntity entity which we get after parsing the url
+     * @return checking if events empty
+     */
     public boolean isEventFilled(PostBackEntity postBackEntity) {
         return !postBackEntity.getEvent1().isEmpty() || !postBackEntity.getEvent2().isEmpty()
                 || !postBackEntity.getEvent3().isEmpty() || !postBackEntity.getEvent4().isEmpty()
@@ -143,6 +159,12 @@ public class PostbackHandler {
                 || !postBackEntity.getEvent7().isEmpty() || !postBackEntity.getEvent8().isEmpty()
                 || !postBackEntity.getEvent9().isEmpty() || !postBackEntity.getEvent10().isEmpty();
     }
+
+    /**
+     * Method creates ErrorPostBackEntity from PostBackEntity
+     * @param postBackEntity entity which we get after parsing the url
+     * @return error postback
+     */
     public ErrorPostBackEntity createError(PostBackEntity postBackEntity) {
         ErrorPostBackEntity errorPostBackEntity = new ErrorPostBackEntity();
         errorPostBackEntity.setActionId(postBackEntity.getActionId());
@@ -182,18 +204,33 @@ public class PostbackHandler {
         return errorPostBackEntity;
     }
 
+    /**
+     * Method checks is postback partial
+     * @param clickId parameter of postback
+     * @return checking if postback is partial
+     */
     private boolean isPostbackPartial(String clickId) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
         AbstractPostBackEntity postBackEntity = mySQLDao.getPostbackByClickId(clickId);
         return postBackEntity != null;
     }
 
+    /**
+     * Method checks is transactionid in db
+     * @param transactionId parameter of postback
+     * @return checking if transaction is in db
+     */
     private boolean isTransactionidInDB(String transactionId) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
         AbstractPostBackEntity postBackEntity = mySQLDao.getPostbackByTransactionId(transactionId);
         return postBackEntity != null;
     }
 
+    /**
+     * Method checks is prefix in db
+     * @param prefix parameter of postback
+     * @return checking if prefix in db
+     */
     private boolean isPrefixInTrackers(String prefix) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
         TrackerEntity trackerEntity = mySQLDao.getTrackerByPrefix(prefix);
