@@ -14,7 +14,7 @@ import java.sql.Time;
 import java.util.Map;
 
 /**
- * Created by lollipop on 27.07.2017.
+ * This class contains the main logic of application
  */
 public class MainController {
     final static Logger logger = Logger.getLogger(MainController.class);
@@ -25,6 +25,14 @@ public class MainController {
         postbackHandler = new PostbackHandler();
     }
 
+    /**
+     * Main method which gets postbackURL and sending postback to trackers and db
+     * parses url, creates PostBackEntity
+     * validates postbacks
+     * sends postbacks to db and to trackers
+     * @param postbackURL url of postback which we get from socket
+     * @return serverAnswer
+     */
     public String sendPostback(String postbackURL) {
         currentDate = new java.util.Date(System.currentTimeMillis());
         Map<String, String> parameters = postbackHandler.getPostbackParameters(postbackURL);
@@ -103,20 +111,29 @@ public class MainController {
                 System.out.println("Done");
             } else {
                 System.out.println("Using binomHandler");
-                binomHandler(postBackEntity, postbackHandler);
+                binomHandler(postBackEntity);
                 System.out.println("Done");
             }
         }
         return "HTTP/1.1 200 OK\r\n";
     }
 
+    /**
+     * Method checks is postback in db by url
+     * @param postbackUrl url of postback which we get from socket
+     * @return result of checking
+     */
     private boolean isPostbackUrlInDB(String postbackUrl) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
         PostBackEntity postBackEntity = mySQLDao.getPostbackByFullUrl(postbackUrl);
         return postBackEntity != null;
     }
 
-    public void binomHandler(PostBackEntity postBackEntity, PostbackHandler postbackHandler) {
+    /**
+     * Method which send binom postback to db and to binom
+     * @param postBackEntity entity which we get after parsing the url
+     */
+    public void binomHandler(PostBackEntity postBackEntity) {
         System.out.println("Creating affise tracker entity");
         System.out.println("Creating binom entity");
         checkPostbackStatus(postBackEntity);
@@ -139,6 +156,10 @@ public class MainController {
 
     }
 
+    /**
+     * Method which send affise postback to db and to binom
+     * @param postBackEntity entity which we get after parsing the url
+     */
     private void affiseHandler(PostBackEntity postBackEntity) {
         System.out.println("Creating affise tracker entity");
         AffiseTracker tracker = new AffiseTracker(MySQLDaoImpl.getInstance()
@@ -158,6 +179,11 @@ public class MainController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Methd which checks postback status, advname and changes events if it necessary
+     * @param postBackEntity entity which we get after parsing the url
+     */
     private void checkPostbackStatus(PostBackEntity postBackEntity) {
         if (postBackEntity.getStatus().isEmpty() || postBackEntity.getAdvName().isEmpty() || postBackEntity.getSum() == 0) return;
         StatusEventsEntity statusEventsEntity = MySQLDaoImpl.getInstance()
@@ -167,6 +193,11 @@ public class MainController {
         postBackEntity.setDuplicate("original");
     }
 
+    /**
+     * Method which chooses event and changes it
+     * @param postBackEntity entity which we get after parsing the url
+     * @param statusEventsEntity entity which we get by status and advname from db
+     */
     private void chooseEvent(PostBackEntity postBackEntity, StatusEventsEntity statusEventsEntity) {
         int event;
         switch (statusEventsEntity.getEventName()) {
@@ -243,6 +274,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Method which realized exchanging currency to USD
+     * @param postBackEntity entity which we get after parsing the url
+     */
     private void setExchange(PostBackEntity postBackEntity) {
         CurrencyEntity currencyEntity = MySQLDaoImpl.getInstance().getCurrency(postBackEntity.getCurrency());
         if (currencyEntity == null) currencyEntity = MySQLDaoImpl.getInstance().getCurrency("USD");
@@ -253,6 +288,11 @@ public class MainController {
         postBackEntity.setSum(sum);
         postBackEntity.setExchange(exchangeEntity.getId());
     }
+
+    /**
+     * Method which handles events before sending to db
+     * @param postBackEntity entity which we get after parsing the url
+     */
     private void addingEventToPostback(PostBackEntity postBackEntity) {
         if (!postBackEntity.getAddEvent1().isEmpty()) postBackEntity.setEvent1("+" + postBackEntity.getAddEvent1());
         if (!postBackEntity.getAddEvent2().isEmpty()) postBackEntity.setEvent2("+" + postBackEntity.getAddEvent2());
@@ -266,6 +306,11 @@ public class MainController {
         if (!postBackEntity.getAddEvent10().isEmpty()) postBackEntity.setEvent10("+" + postBackEntity.getAddEvent10());
     }
 
+    /**
+     * Method which checks if events are empty
+     * @param postBackEntity entity which we get after parsing the url
+     * @return result of checking events
+     */
     private boolean isAllEventsEmpty(PostBackEntity postBackEntity) {
         return postBackEntity.getEvent1().isEmpty() && postBackEntity.getEvent2().isEmpty()
                 && postBackEntity.getEvent3().isEmpty() && postBackEntity.getEvent4().isEmpty()
@@ -274,9 +319,14 @@ public class MainController {
                 && postBackEntity.getEvent9().isEmpty() && postBackEntity.getEvent10().isEmpty();
     }
 
-    private boolean isAffidInAffiliate(int affid) {
+    /**
+     * Method checks is affid in db
+     * @param afid the value which contains in postback
+     * @return result of checking
+     */
+    private boolean isAffidInAffiliate(int afid) {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
-        AffiliatesEntity affiliate = mySQLDao.getAffiliateByAffid(affid);
+        AffiliatesEntity affiliate = mySQLDao.getAffiliateByAffid(afid);
         return affiliate != null;
     }
 }
