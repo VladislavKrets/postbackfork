@@ -10,8 +10,9 @@ import java.net.SocketException;
 import java.util.Date;
 
 /**
- * Created by lollipop on 19.07.2017.
+ * Thread which gets socket and handles it
  */
+
 public class PostbackHandlerThread implements Runnable{
 
     private Socket socket;
@@ -26,6 +27,11 @@ public class PostbackHandlerThread implements Runnable{
         }
     }
 
+    /**
+     * Method gets socket and handles it
+     * Writes url to file
+     * Returns ok page
+     */
     @Override
     public void run() {
         try {
