@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by lollipop on 11.07.2017.
+ * Class which sends postback to affise
  */
 public class AffiseTracker {
     private String baseUrl;
@@ -24,6 +24,12 @@ public class AffiseTracker {
         headers = new HashMap<>();
     }
 
+    /**
+     * Method creates url and sends postback to affise
+     * @param postBackEntity entity which we get after parsing the url
+     * @return server answer
+     * @throws NoClickIdException when postback doesn't contain clickid
+     */
     public String sendPostback(AbstractPostBackEntity postBackEntity) throws NoClickIdException {
         String url = "";
         try {
@@ -40,6 +46,13 @@ public class AffiseTracker {
         return url + " answer=" +answer.get(1);
     }
 
+    /**
+     * Method forms url for sending to affise
+     * @param postBackEntity entity which we get after parsing the url
+     * @return formed url
+     * @throws NoClickIdException when clickid not found
+     * @throws UnsupportedEncodingException when url encoding is unsuccessful
+     */
     public String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
