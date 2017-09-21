@@ -234,6 +234,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 currencyEntity = null;
             }
             catch (PersistenceException e) {
+                e.printStackTrace();
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");

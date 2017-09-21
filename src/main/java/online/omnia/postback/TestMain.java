@@ -1,6 +1,7 @@
 package online.omnia.postback;
 
 import online.omnia.postback.controller.MainController;
+import online.omnia.postback.core.dao.MySQLDaoImpl;
 import online.omnia.postback.queue.QueueWriter;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public class TestMain {
     public static void main(String[] args) throws InterruptedException {
-
+        MySQLDaoImpl.getInstance();
         MainController controller = new MainController();
         List<String> urls;
         while (true) {

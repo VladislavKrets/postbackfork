@@ -40,7 +40,7 @@ public class QueueWriter {
                 }
                 statusReader.close();
                 statusReader = null;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
