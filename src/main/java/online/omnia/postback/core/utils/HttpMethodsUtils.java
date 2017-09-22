@@ -50,7 +50,7 @@ public class HttpMethodsUtils {
         return "";
     }
     public List<String> getMethod(String url, Map<String, String> headers){
-        if (!(url.startsWith("http://") || url.startsWith("https://"))) url = "https://" + url;
+        if (!((url.startsWith("http://") || url.startsWith("https://")))) url = "http://" + url;
         HttpGet httpGet = null;
 
             httpGet = new HttpGet(url);

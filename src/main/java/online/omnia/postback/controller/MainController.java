@@ -65,34 +65,17 @@ public class MainController {
         if (postbackHandler.isEventFilled(postBackEntity)) {
             postBackEntity.setDuplicate("PARTIAL");
         }
-        if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) == null) {
-            postBackEntity.setAfid(2);
-        }
-
         if (postBackEntity.getPrefix() == null) {
             System.out.println("No prefix or prefix is wrong");
             System.out.println("Writing to error_log");
             FileWorkingUtils.writeErrorPostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackURL);
             System.out.println("Setting prefix, afid and clickid");
-            postBackEntity.setPrefix("333");
-            postBackEntity.setAfid(2);
+            postBackEntity.setPrefix("");
             System.out.println("Adding to db");
+            setExchange(postBackEntity);
+            MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
 
-            System.out.println("Sending to affise");
-            AffiseTracker tracker = new AffiseTracker(MySQLDaoImpl.getInstance()
-                    .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
-            try {
-                System.out.println("sending postback");
-                String answer = tracker.sendPostback(postBackEntity);
-                FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
-                        new Time(currentDate.getTime()), answer);
-                setExchange(postBackEntity);
-                MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
-            } catch (NoClickIdException e) {
-                System.out.println("Exception. ClickId is null");
-                return "HTTP/1.1 201 error\r\n";
-            }
             System.out.println("Done");
             return "HTTP/1.1 200 OK\r\n";
         } else if (isAllEventsEmpty(postBackEntity) && !postBackEntity.getClickId().isEmpty()
@@ -152,7 +135,10 @@ public class MainController {
         System.out.println("Adding to db");
         addingEventToPostback(postBackEntity);
         setExchange(postBackEntity);
-        MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+        if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) != null) {
+            MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+        }
+        else MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
 
     }
 
@@ -174,14 +160,17 @@ public class MainController {
                     new Time(currentDate.getTime()), answer);
             System.out.println(postBackEntity);
             setExchange(postBackEntity);
-            MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+            if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) != null) {
+                MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+            }
+            else MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
         } catch (NoClickIdException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Methd which checks postback status, advname and changes events if it necessary
+     * Method which checks postback status, advname and changes events if it necessary
      * @param postBackEntity entity which we get after parsing the url
      */
     private void checkPostbackStatus(PostBackEntity postBackEntity) {
