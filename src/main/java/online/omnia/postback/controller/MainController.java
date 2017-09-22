@@ -123,18 +123,20 @@ public class MainController {
         BinomTracker binomTracker = new BinomTracker(MySQLDaoImpl.getInstance()
                 .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
         try {
+            PostBackEntity clone = postBackEntity.clone();
+            setExchange(clone);
             System.out.println("Sending to binom");
-            String answer = binomTracker.sendPostback(postBackEntity);
+            String answer = binomTracker.sendPostback(clone);
             System.out.println(answer.split(" ")[1]);
             if (answer.split(" ")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
             FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), answer);
-        } catch (NoClickIdException e) {
+        } catch (NoClickIdException | CloneNotSupportedException e) {
             e.printStackTrace();
         }
         System.out.println("Adding to db");
         addingEventToPostback(postBackEntity);
-        setExchange(postBackEntity);
+
         if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) != null) {
             MySQLDaoImpl.getInstance().addPostback(postBackEntity);
         }
@@ -155,16 +157,18 @@ public class MainController {
 
         try {
             System.out.println("Sending postback");
-            String answer = tracker.sendPostback(postBackEntity);
+            PostBackEntity clone = postBackEntity.clone();
+            setExchange(clone);
+            String answer = tracker.sendPostback(clone);
             FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), answer);
             System.out.println(postBackEntity);
-            setExchange(postBackEntity);
+
             if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) != null) {
                 MySQLDaoImpl.getInstance().addPostback(postBackEntity);
             }
             else MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
-        } catch (NoClickIdException e) {
+        } catch (NoClickIdException | CloneNotSupportedException e) {
             e.printStackTrace();
         }
     }

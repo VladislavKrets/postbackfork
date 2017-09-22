@@ -186,6 +186,10 @@ public class MySQLDaoImpl implements MySQLDao {
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
+            } catch (Exception e) {
+                FileWorkingUtils.writeNotSentPostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), errorPostBackEntity.getFullURL());
+                isWritten = true;
             }
         }
         session.close();
@@ -220,6 +224,11 @@ public class MySQLDaoImpl implements MySQLDao {
                     e1.printStackTrace();
                 }
             }
+            catch (Exception e) {
+                FileWorkingUtils.writeNotSentPostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), postBackEntity.getFullURL());
+                isWritten = true;
+            }
         }
         session.close();
     }
@@ -242,6 +251,7 @@ public class MySQLDaoImpl implements MySQLDao {
             }
             catch (NoResultException e) {
                 currencyEntity = null;
+                break;
             }
             catch (PersistenceException e) {
                 e.printStackTrace();
