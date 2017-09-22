@@ -14,6 +14,7 @@ import java.util.Map;
 public class FileWorkingUtils {
     private static FileWriter postbackURLWriter;
     private static FileWriter errorPostbackURLWriter;
+    private static FileWriter notSendFileWriter;
     private static BufferedReader fileReader;
     final static Logger logger = Logger.getLogger(FileWorkingUtils.class);
 
@@ -28,6 +29,9 @@ public class FileWorkingUtils {
             file = new File("postback/error_postback.log");
             if (!file.exists()) file.createNewFile();
             errorPostbackURLWriter = new FileWriter(file, true);
+            file = new File("postback/postback_notsent.log");
+            if (!file.exists()) file.createNewFile();
+            notSendFileWriter = new FileWriter(file, true);
         } catch (IOException e) {
             e.printStackTrace();
             logger.debug("Exception during initializing fileWriters");
@@ -50,6 +54,15 @@ public class FileWorkingUtils {
             logger.debug(e.getMessage());
         }
         return properties;
+    }
+    public static synchronized void writeNotSentPostback(Date date, Time time, String url) {
+        String line = buildLine(date, time, url);
+        try {
+            notSendFileWriter.write(line);
+            notSendFileWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public static synchronized void writePostback(Date date, Time time, String fullUrl){
         String line = buildLine(date, time, fullUrl);

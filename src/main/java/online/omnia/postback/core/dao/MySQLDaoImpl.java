@@ -165,6 +165,7 @@ public class MySQLDaoImpl implements MySQLDao {
      */
     public synchronized void addErrorPostback(ErrorPostBackEntity errorPostBackEntity) {
         Session session = null;
+        boolean isWritten = false;
         while (true) {
             try {
                 session = masterDbSessionFactory.openSession();
@@ -173,6 +174,11 @@ public class MySQLDaoImpl implements MySQLDao {
                 session.getTransaction().commit();
                 break;
             } catch (PersistenceException e) {
+                if (!isWritten) {
+                    FileWorkingUtils.writeNotSentPostback(new java.sql.Date(System.currentTimeMillis()),
+                            new Time(System.currentTimeMillis()), errorPostBackEntity.getFullURL());
+                    isWritten = true;
+                }
                 try {
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
@@ -192,6 +198,7 @@ public class MySQLDaoImpl implements MySQLDao {
     @Override
     public synchronized void addPostback(PostBackEntity postBackEntity) {
         Session session = null;
+        boolean isWritten = false;
         while (true) {
             try {
                 session = masterDbSessionFactory.openSession();
@@ -201,8 +208,11 @@ public class MySQLDaoImpl implements MySQLDao {
                 break;
             } catch (PersistenceException e) {
                 try {
-                    FileWorkingUtils.writeErrorPostback(new java.sql.Date(System.currentTimeMillis()),
-                            new Time(System.currentTimeMillis()), postBackEntity.getFullURL());
+                    if (!isWritten) {
+                        FileWorkingUtils.writeNotSentPostback(new java.sql.Date(System.currentTimeMillis()),
+                                new Time(System.currentTimeMillis()), postBackEntity.getFullURL());
+                        isWritten = true;
+                    }
                     System.out.println("Can't connect to db");
                     System.out.println("Waiting for 30 seconds");
                     Thread.sleep(30000);
