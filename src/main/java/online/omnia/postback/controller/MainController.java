@@ -79,6 +79,8 @@ public class MainController {
         } else if (!checkDuplicates(postBackEntity)) {
             FileWorkingUtils.writePostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackURL);
+            checkPostbackStatus(postBackEntity);
+            addingEventToPostback(postBackEntity);
             MySQLDaoImpl.getInstance().addPostback(postBackEntity);
             return "HTTP/1.1 200 OK\r\n";
         } else {
