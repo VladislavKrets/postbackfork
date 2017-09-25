@@ -136,14 +136,6 @@ public class PostbackHandler {
         else postBackEntity.setPostbackSend(2);
         postBackEntity.setDuplicate("original");
 
-        if (isPostbackPartial(postBackEntity.getClickId()) && isEventFilled(postBackEntity)){
-            System.out.println("is postback PARTIAl");
-            postBackEntity.setDuplicate("PARTIAL");
-        }
-        if (MySQLDaoImpl.getInstance().getPostbackByClickIdTransactionIdStatus(postBackEntity.getClickId(),
-                postBackEntity.getTransactionId(), postBackEntity.getStatus()) != null) {
-            postBackEntity.setDuplicate("PARTIAL");
-        }
         return postBackEntity;
     }
 

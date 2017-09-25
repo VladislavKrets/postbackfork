@@ -58,10 +58,8 @@ public class MainController {
         System.out.println("Setting url");
         postBackEntity.setFullURL(postbackURL);
 
-        if (isPostbackUrlInDB(postBackEntity.getFullURL())) {
-            System.out.println("Postback is FULL");
-            postBackEntity.setDuplicate("FULL");
-        }
+
+        System.out.println(postBackEntity.getPrefix());
         if (postbackHandler.isEventFilled(postBackEntity)) {
             postBackEntity.setDuplicate("PARTIAL");
         }
@@ -78,8 +76,7 @@ public class MainController {
 
             System.out.println("Done");
             return "HTTP/1.1 200 OK\r\n";
-        } else if (isAllEventsEmpty(postBackEntity) && !postBackEntity.getClickId().isEmpty()
-                && !postBackEntity.getTransactionId().isEmpty()) {
+        } else if (!checkDuplicates(postBackEntity)) {
             FileWorkingUtils.writePostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackURL);
             MySQLDaoImpl.getInstance().addPostback(postBackEntity);
@@ -125,6 +122,7 @@ public class MainController {
         try {
             PostBackEntity clone = postBackEntity.clone();
             setExchange(clone);
+            postBackEntity.setExchange(clone.getExchange());
             System.out.println("Sending to binom");
             String answer = binomTracker.sendPostback(clone);
             System.out.println(answer.split(" ")[1]);
@@ -275,7 +273,7 @@ public class MainController {
         CurrencyEntity currencyEntity = MySQLDaoImpl.getInstance().getCurrency(postBackEntity.getCurrency());
         if (currencyEntity == null) currencyEntity = MySQLDaoImpl.getInstance().getCurrency("USD");
         ExchangeEntity exchangeEntity = MySQLDaoImpl.getInstance().getExchange(currencyEntity.getId());
-        double sum = (postBackEntity.getSum() / exchangeEntity.getRate()) * 100;
+        double sum = (postBackEntity.getSum() / exchangeEntity.getRate() / currencyEntity.getCount()) * 100;
         int tempSum = (int) sum;
         sum = tempSum / 100.0;
         postBackEntity.setSum(sum);
@@ -321,5 +319,53 @@ public class MainController {
         MySQLDaoImpl mySQLDao = MySQLDaoImpl.getInstance();
         AffiliatesEntity affiliate = mySQLDao.getAffiliateByAffid(afid);
         return affiliate != null;
+    }
+
+    private boolean checkDuplicates(PostBackEntity postBackEntity) {
+        if (!isAllEventsEmpty(postBackEntity)) {
+            if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty()) {
+                if (MySQLDaoImpl.getInstance().isPostbackByClickidAndTransactonId(postBackEntity.getClickId(),
+                        postBackEntity.getTransactionId())) {
+                    postBackEntity.setDuplicate("PARTIAL");
+                    return true;
+                }
+            }
+            else if (!postBackEntity.getClickId().isEmpty()) {
+                if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
+                    postBackEntity.setDuplicate("PARTIAL");
+                    return true;
+                }
+            }
+        }
+        else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty() &&
+                !postBackEntity.getStatus().isEmpty()) {
+            if (MySQLDaoImpl.getInstance().getPostbackByClickIdTransactionIdStatus(postBackEntity.getClickId(),
+                    postBackEntity.getTransactionId(), postBackEntity.getStatus()) != null) {
+                postBackEntity.setDuplicate("FULL");
+                return false;
+            }
+            else if (MySQLDaoImpl.getInstance().isPostbackByClickidAndTransactonId(postBackEntity.getClickId(),
+                    postBackEntity.getTransactionId())) {
+                postBackEntity.setDuplicate("PARTIAL");
+                return true;
+            }
+        }
+        else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty()) {
+            if (MySQLDaoImpl.getInstance().isPostbackByClickidAndTransactonId(postBackEntity.getClickId(), postBackEntity.getTransactionId())) {
+                postBackEntity.setDuplicate("FULL");
+                return false;
+            }
+            else if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
+                postBackEntity.setDuplicate("PARTIAL");
+                return true;
+            }
+        }
+        else if (!postBackEntity.getClickId().isEmpty()) {
+            if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
+                postBackEntity.setDuplicate("FULL");
+                return false;
+            }
+        }
+        return true;
     }
 }

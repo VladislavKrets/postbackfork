@@ -73,7 +73,7 @@ public class PostbackHandlerThread implements Runnable{
             outputStream.write("X-Content-Type-Options: noshiff\r\n".getBytes("UTF-8"));
             outputStream.write("X-XSS-Protection: 1\r\n".getBytes("UTF-8"));
             outputStream.write("X-Frame-Options: Deny\r\n\r\n".getBytes("UTF-8"));
-            outputStream.write("<html><body><p>OK</p></body></html>".getBytes("UTF-8"));
+            outputStream.write("OK".getBytes("UTF-8"));
             outputStream.close();
             socket.close();
         } catch (IOException e) {

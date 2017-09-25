@@ -19,8 +19,6 @@ public class ExchangeEntity {
     private Date time;
     @Column(name = "currency_id")
     private int currencyId;
-    @Column(name = "count")
-    private int count;
     @Column(name = "rate")
     private double rate;
 
@@ -40,7 +38,4 @@ public class ExchangeEntity {
         return rate;
     }
 
-    public int getCount() {
-        return count;
-    }
 }

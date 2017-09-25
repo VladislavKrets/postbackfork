@@ -511,7 +511,7 @@ public class MySQLDaoImpl implements MySQLDao {
             try {
                 session = masterDbSessionFactory.openSession();
 
-                    postBackEntities = session.createQuery("from PostbackEntity where clickid=:clickId and transactionid=:transactionId and status=:status",
+                    postBackEntities = session.createQuery("from PostBackEntity where clickid=:clickId and transactionid=:transactionId and status=:status",
                             PostBackEntity.class)
                             .setParameter("clickId", clickId)
                             .setParameter("transactionId", transactionId)
@@ -531,7 +531,28 @@ public class MySQLDaoImpl implements MySQLDao {
             }
         }
     }
-
+    public boolean isPostbackByClickidAndTransactonId(String clickid, String transactionId) {
+        Session session = null;
+        List<PostBackEntity> postBackEntities = null;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                postBackEntities = session.createQuery("from PostBackEntity where clickid=:clickId and transactionid=:transactionId", PostBackEntity.class)
+                        .setParameter("clickId", clickid)
+                        .setParameter("transactionId", transactionId)
+                        .getResultList();
+                return !postBackEntities.isEmpty();
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
     /**
      * Method gets tracker by prefix from db
      * @param prefix postback parameter

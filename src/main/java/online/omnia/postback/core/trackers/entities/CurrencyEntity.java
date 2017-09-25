@@ -20,6 +20,9 @@ public class CurrencyEntity {
     private String descriptions;
     @Column(name = "sync")
     private int sync;
+    @Column(name = "count")
+    private int count;
+
 
     public int getId() {
         return id;
@@ -35,5 +38,9 @@ public class CurrencyEntity {
 
     public int getSync() {
         return sync;
+    }
+
+    public int getCount() {
+        return count;
     }
 }
