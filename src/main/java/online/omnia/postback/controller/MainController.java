@@ -79,8 +79,11 @@ public class MainController {
         } else if (!checkDuplicates(postBackEntity)) {
             FileWorkingUtils.writePostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackURL);
-            checkPostbackStatus(postBackEntity);
             addingEventToPostback(postBackEntity);
+            CurrencyEntity currencyEntity = MySQLDaoImpl.getInstance().getCurrency(postBackEntity.getCurrency());
+            if (currencyEntity == null) currencyEntity = MySQLDaoImpl.getInstance().getCurrency("USD");
+            ExchangeEntity exchangeEntity = MySQLDaoImpl.getInstance().getExchange(currencyEntity.getId());
+            postBackEntity.setExchange(exchangeEntity.getId());
             MySQLDaoImpl.getInstance().addPostback(postBackEntity);
             return "HTTP/1.1 200 OK\r\n";
         } else {
@@ -118,7 +121,6 @@ public class MainController {
     public void binomHandler(PostBackEntity postBackEntity) {
         System.out.println("Creating affise tracker entity");
         System.out.println("Creating binom entity");
-        checkPostbackStatus(postBackEntity);
         BinomTracker binomTracker = new BinomTracker(MySQLDaoImpl.getInstance()
                 .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
         try {
@@ -183,7 +185,7 @@ public class MainController {
                 .getEvent(postBackEntity.getStatus(), postBackEntity.getAdvName());
         if (statusEventsEntity == null) return;
         chooseEvent(postBackEntity, statusEventsEntity);
-        postBackEntity.setDuplicate("original");
+        postBackEntity.setDuplicate("PARTIAL");
     }
 
     /**
@@ -271,13 +273,13 @@ public class MainController {
      * Method which realized exchanging currency to USD
      * @param postBackEntity entity which we get after parsing the url
      */
-    private void setExchange(PostBackEntity postBackEntity) {
+    public void setExchange(PostBackEntity postBackEntity) {
         CurrencyEntity currencyEntity = MySQLDaoImpl.getInstance().getCurrency(postBackEntity.getCurrency());
         if (currencyEntity == null) currencyEntity = MySQLDaoImpl.getInstance().getCurrency("USD");
         ExchangeEntity exchangeEntity = MySQLDaoImpl.getInstance().getExchange(currencyEntity.getId());
-        double sum = (postBackEntity.getSum() / exchangeEntity.getRate() / currencyEntity.getCount()) * 100;
+        double sum = (postBackEntity.getSum() / exchangeEntity.getRate() / currencyEntity.getCount()) * 10000;
         int tempSum = (int) sum;
-        sum = tempSum / 100.0;
+        sum = tempSum / 10000.0;
         postBackEntity.setSum(sum);
         postBackEntity.setExchange(exchangeEntity.getId());
     }
@@ -338,6 +340,9 @@ public class MainController {
                     return true;
                 }
             }
+        }
+        else if (MySQLDaoImpl.getInstance().isPostbackWithPrefixAndClickId(postBackEntity.getPrefix(), postBackEntity.getClickId())) {
+            postBackEntity.setDuplicate("PARTIAL");
         }
         else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty() &&
                 !postBackEntity.getStatus().isEmpty()) {

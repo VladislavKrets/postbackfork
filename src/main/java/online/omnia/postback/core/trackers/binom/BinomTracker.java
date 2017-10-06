@@ -1,7 +1,9 @@
 package online.omnia.postback.core.trackers.binom;
 
+import online.omnia.postback.core.dao.MySQLDaoImpl;
 import online.omnia.postback.core.exceptions.NoClickIdException;
 import online.omnia.postback.core.trackers.entities.AbstractPostBackEntity;
+import online.omnia.postback.core.trackers.entities.TrackerEntity;
 import online.omnia.postback.core.utils.HttpMethodsUtils;
 import org.apache.log4j.Logger;
 
@@ -52,12 +54,16 @@ public class BinomTracker {
      * @throws UnsupportedEncodingException when url encoding unsuccessful
      */
     public String buildUrl(AbstractPostBackEntity postBackEntity) throws NoClickIdException, UnsupportedEncodingException {
-        StringBuilder urlBuilder = new StringBuilder(baseUrl + "click.php?");
+
         if (postBackEntity.getClickId() == null || postBackEntity.getClickId().isEmpty())
             throw new NoClickIdException();
-        urlBuilder.append("cnid=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
-        if (postBackEntity.getSum() != 0) urlBuilder.append("&sm=").append(postBackEntity.getSum());
-        if (!postBackEntity.getStatus().isEmpty()) urlBuilder.append("&cnst1=").append(URLEncoder.encode(postBackEntity.getStatus(), "UTF-8"));
+
+        TrackerEntity trackerEntity = MySQLDaoImpl.getInstance().getTrackerByPrefix(postBackEntity.getPrefix());
+        StringBuilder urlBuilder = new StringBuilder(baseUrl + "/" + trackerEntity.getClick() + "?");
+        urlBuilder.append(trackerEntity.getClickid()).append("=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
+        if (postBackEntity.getSum() != 0) urlBuilder.append("&").append(trackerEntity.getSum()).append("=").append(postBackEntity.getSum());
+        if (!postBackEntity.getStatus().isEmpty()) urlBuilder.append("&").append(trackerEntity.getStatus1Name())
+                .append("=").append(URLEncoder.encode(postBackEntity.getStatus(), "UTF-8"));
         if (!postBackEntity.getEvent1().isEmpty()) urlBuilder.append("&event1=").append(postBackEntity.getEvent1());
         if (!postBackEntity.getEvent2().isEmpty()) urlBuilder.append("&event2=").append(postBackEntity.getEvent2());
         if (!postBackEntity.getEvent3().isEmpty()) urlBuilder.append("&event3=").append(postBackEntity.getEvent3());

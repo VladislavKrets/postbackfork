@@ -95,6 +95,30 @@ public class MySQLDaoImpl implements MySQLDao {
         return secondDbSessionFactory;
     }
 
+    public boolean isPostbackWithPrefixAndClickId(String prefix, String clickid) {
+        Session session = null;
+        List<PostBackEntity> statusEventsEntity = null;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                statusEventsEntity = session.createQuery("from PostBackEntity where prefix=:prefix and clickid=:clickid", PostBackEntity.class)
+                        .setParameter("prefix", prefix)
+                        .setParameter("clickid", clickid)
+                        .getResultList();
+                return !statusEventsEntity.isEmpty();
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+        }
+    }
+
     /**
      * Method gets event from db
      * @param status postback status

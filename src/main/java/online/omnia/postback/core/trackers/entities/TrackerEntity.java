@@ -22,8 +22,28 @@ public class TrackerEntity {
     private String ip;
     @Column(name = "modulename", length = 50)
     private String moduleName;
+    @Column(name = "clickid")
+    private String clickid;
+    @Column(name = "sum")
+    private String sum;
+    @Column(name = "status1name")
+    private String status1Name;
+    @Column(name = "status2name")
+    private String status2Name;
+    @Column(name = "index_php")
+    private String indexPhp;
+    @Column(name = "click")
+    private String click;
 
     public TrackerEntity() {
+    }
+
+    public String getIndexPhp() {
+        return indexPhp;
+    }
+
+    public String getClick() {
+        return click;
     }
 
     public String getPrefix() {
@@ -44,5 +64,21 @@ public class TrackerEntity {
 
     public String getModuleName() {
         return moduleName;
+    }
+
+    public String getClickid() {
+        return clickid;
+    }
+
+    public String getSum() {
+        return sum;
+    }
+
+    public String getStatus1Name() {
+        return status1Name;
+    }
+
+    public String getStatus2Name() {
+        return status2Name;
     }
 }

@@ -17,55 +17,55 @@ public abstract class AbstractPostBackEntity {
     private Date date;
     @Column(name = "time")
     private Time time;
-    @Column(name = "prefix", length = 50)
+    @Column(name = "prefix")
     private String prefix;
-    @Column(name = "clickid", length = 100)
+    @Column(name = "clickid")
     private String clickId;
     @Column(name = "sum")
     private double sum;
-    @Column(name = "currency", length = 3)
+    @Column(name = "currency")
     private String currency;
-    @Column(name = "goal", length = 50)
+    @Column(name = "goal")
     private String goal;
     @Column(name = "afid")
     private int afid;
-    @Column(name = "status", length = 50)
+    @Column(name = "status")
     private String status;
-    @Column(name = "advname", length = 100)
+    @Column(name = "advname")
     private String advName;
-    @Column(name = "offername", length = 100)
+    @Column(name = "offername")
     private String offerName;
-    @Column(name = "transactionid", length = 50)
+    @Column(name = "transactionid")
     private String transactionId;
-    @Column(name = "idfa", length = 50)
+    @Column(name = "idfa")
     private String IDFA;
-    @Column(name = "gaid", length = 50)
+    @Column(name = "gaid")
     private String GaId;
-    @Column(name = "t1", length = 100)
+    @Column(name = "t1")
     private String t1;
-    @Column(name = "t2", length = 100)
+    @Column(name = "t2")
     private String t2;
-    @Column(name = "t3", length = 100)
+    @Column(name = "t3")
     private String t3;
-    @Column(name = "t4", length = 100)
+    @Column(name = "t4")
     private String t4;
-    @Column(name = "t5", length = 100)
+    @Column(name = "t5")
     private String t5;
-    @Column(name = "t6", length = 100)
+    @Column(name = "t6")
     private String t6;
-    @Column(name = "t7", length = 100)
+    @Column(name = "t7")
     private String t7;
-    @Column(name = "t8", length = 100)
+    @Column(name = "t8")
     private String t8;
-    @Column(name = "t9", length = 100)
+    @Column(name = "t9")
     private String t9;
-    @Column(name = "t10", length = 100)
+    @Column(name = "t10")
     private String t10;
-    @Column(name = "secretkey", length = 50)
+    @Column(name = "secretkey")
     private String secretKey;
-    @Column(name = "ipaddress", length = 20)
+    @Column(name = "ipaddress")
     private String ipAddress;
-    @Column(name = "fullurl", length = 500)
+    @Column(name = "fullurl")
     private String fullURL;
     @Column(name = "postbacksend")
     private int postbackSend;
