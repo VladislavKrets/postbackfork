@@ -1,10 +1,7 @@
 package online.omnia.postback.core.utils;
 
 import online.omnia.postback.core.dao.MySQLDaoImpl;
-import online.omnia.postback.core.trackers.entities.AbstractPostBackEntity;
-import online.omnia.postback.core.trackers.entities.ErrorPostBackEntity;
-import online.omnia.postback.core.trackers.entities.PostBackEntity;
-import online.omnia.postback.core.trackers.entities.TrackerEntity;
+import online.omnia.postback.core.trackers.entities.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -83,8 +80,8 @@ public class PostbackHandler {
             else clickid = clickid.substring(prefixNumber + 1, clickIdLength);
         }
 
-        postBackEntity.setClickId(clickid);
-        postBackEntity.setPrefix(prefix);
+        postBackEntity.setClickId(clickid != null ? (clickid.length() < 200 ? clickid : clickid.substring(0, 200)) : null);
+        postBackEntity.setPrefix(prefix != null ? (prefix.length() < 50 ? prefix : prefix.substring(0, 50)) : null);
 
         if (parameters.containsKey("sum") && parameters.get("sum").matches("(\\d+.\\d+)|(\\d+)")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
         if (parameters.containsKey("currency")) postBackEntity.setCurrency(parameters.get("currency").length() < 15 ? parameters.get("currency") : parameters.get("currency").substring(0, 15));
@@ -135,6 +132,19 @@ public class PostbackHandler {
         if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+")) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
         else postBackEntity.setPostbackSend(2);
         postBackEntity.setDuplicate("original");
+        if (parameters.containsKey("idc") && parameters.get("idc").contains("_")) {
+            String[] idc = parameters.get("idc").split("_");
+            postBackEntity.setSecondPrefix(idc[0]);
+            postBackEntity.setIdc(idc[1]);
+            idc = null;
+        }
+        if (parameters.containsKey("ido") && parameters.get("ido").contains("_")) {
+            String[] ido = parameters.get("ido").split("_");
+            postBackEntity.setSecondPrefix(ido[0]);
+            postBackEntity.setIdo(ido[1]);
+            ido = null;
+        }
+
 
         return postBackEntity;
     }
@@ -152,6 +162,67 @@ public class PostbackHandler {
                 || !postBackEntity.getEvent9().isEmpty() || !postBackEntity.getEvent10().isEmpty();
     }
 
+    public PostBackEntity1 createPostbackEntity1(PostBackEntity postBackEntity) {
+        PostBackEntity1 postBackEntity1 = new PostBackEntity1();
+        postBackEntity1.setActionId(postBackEntity.getActionId());
+        postBackEntity1.setAdvName(postBackEntity.getAdvName());
+        postBackEntity1.setAfid(postBackEntity.getAfid());
+        postBackEntity1.setClickId(postBackEntity.getClickId());
+        postBackEntity1.setCurrency(postBackEntity.getCurrency());
+        postBackEntity1.setDate(postBackEntity.getDate());
+        postBackEntity1.setDuplicate(postBackEntity.getDuplicate());
+        postBackEntity1.setFullURL(postBackEntity.getFullURL());
+        postBackEntity1.setGaId(postBackEntity.getGaId());
+        postBackEntity1.setGoal(postBackEntity.getGoal());
+        postBackEntity1.setId(postBackEntity.getId());
+        postBackEntity1.setIDFA(postBackEntity.getIDFA());
+        postBackEntity1.setIpAddress(postBackEntity.getIpAddress());
+        postBackEntity1.setOfferId(postBackEntity.getOfferId());
+        postBackEntity1.setOfferName(postBackEntity.getOfferName());
+        postBackEntity1.setPostbackSend(postBackEntity.getPostbackSend());
+        postBackEntity1.setPrefix(postBackEntity.getPrefix());
+        postBackEntity1.setSecretKey(postBackEntity.getSecretKey());
+        postBackEntity1.setStatus(postBackEntity.getStatus());
+        postBackEntity1.setSum(postBackEntity.getSum());
+        postBackEntity1.setT1(postBackEntity.getT1());
+        postBackEntity1.setT2(postBackEntity.getT2());
+        postBackEntity1.setT3(postBackEntity.getT3());
+        postBackEntity1.setT4(postBackEntity.getT4());
+        postBackEntity1.setT5(postBackEntity.getT5());
+        postBackEntity1.setT6(postBackEntity.getT6());
+        postBackEntity1.setT7(postBackEntity.getT7());
+        postBackEntity1.setT8(postBackEntity.getT8());
+        postBackEntity1.setT9(postBackEntity.getT9());
+        postBackEntity1.setT10(postBackEntity.getT10());
+        postBackEntity1.setTime(postBackEntity.getTime());
+        postBackEntity1.setDuplicate(postBackEntity.getDuplicate());
+        postBackEntity1.setTransactionId(postBackEntity.getTransactionId());
+        postBackEntity1.setEvent1(postBackEntity.getEvent1());
+        postBackEntity1.setEvent2(postBackEntity.getEvent2());
+        postBackEntity1.setEvent3(postBackEntity.getEvent3());
+        postBackEntity1.setEvent4(postBackEntity.getEvent4());
+        postBackEntity1.setEvent5(postBackEntity.getEvent5());
+        postBackEntity1.setEvent6(postBackEntity.getEvent6());
+        postBackEntity1.setEvent7(postBackEntity.getEvent7());
+        postBackEntity1.setEvent8(postBackEntity.getEvent8());
+        postBackEntity1.setEvent9(postBackEntity.getEvent9());
+        postBackEntity1.setEvent10(postBackEntity.getEvent10());
+        postBackEntity1.setAddEvent1(postBackEntity.getAddEvent1());
+        postBackEntity1.setAddEvent2(postBackEntity.getAddEvent2());
+        postBackEntity1.setAddEvent3(postBackEntity.getAddEvent3());
+        postBackEntity1.setAddEvent4(postBackEntity.getAddEvent4());
+        postBackEntity1.setAddEvent5(postBackEntity.getAddEvent5());
+        postBackEntity1.setAddEvent6(postBackEntity.getAddEvent6());
+        postBackEntity1.setAddEvent7(postBackEntity.getAddEvent7());
+        postBackEntity1.setAddEvent8(postBackEntity.getAddEvent8());
+        postBackEntity1.setAddEvent9(postBackEntity.getAddEvent9());
+        postBackEntity1.setAddEvent10(postBackEntity.getAddEvent10());
+        postBackEntity1.setExchange(postBackEntity.getExchange());
+        postBackEntity1.setIdc(postBackEntity.getIdc());
+        postBackEntity1.setIdo(postBackEntity.getIdo());
+
+        return postBackEntity1;
+    }
     /**
      * Method creates ErrorPostBackEntity from PostBackEntity
      * @param postBackEntity entity which we get after parsing the url
@@ -192,6 +263,29 @@ public class PostbackHandler {
         errorPostBackEntity.setTime(postBackEntity.getTime());
         errorPostBackEntity.setDuplicate(postBackEntity.getDuplicate());
         errorPostBackEntity.setTransactionId(postBackEntity.getTransactionId());
+        errorPostBackEntity.setEvent1(postBackEntity.getEvent1());
+        errorPostBackEntity.setEvent2(postBackEntity.getEvent2());
+        errorPostBackEntity.setEvent3(postBackEntity.getEvent3());
+        errorPostBackEntity.setEvent4(postBackEntity.getEvent4());
+        errorPostBackEntity.setEvent5(postBackEntity.getEvent5());
+        errorPostBackEntity.setEvent6(postBackEntity.getEvent6());
+        errorPostBackEntity.setEvent7(postBackEntity.getEvent7());
+        errorPostBackEntity.setEvent8(postBackEntity.getEvent8());
+        errorPostBackEntity.setEvent9(postBackEntity.getEvent9());
+        errorPostBackEntity.setEvent10(postBackEntity.getEvent10());
+        errorPostBackEntity.setAddEvent1(postBackEntity.getAddEvent1());
+        errorPostBackEntity.setAddEvent2(postBackEntity.getAddEvent2());
+        errorPostBackEntity.setAddEvent3(postBackEntity.getAddEvent3());
+        errorPostBackEntity.setAddEvent4(postBackEntity.getAddEvent4());
+        errorPostBackEntity.setAddEvent5(postBackEntity.getAddEvent5());
+        errorPostBackEntity.setAddEvent6(postBackEntity.getAddEvent6());
+        errorPostBackEntity.setAddEvent7(postBackEntity.getAddEvent7());
+        errorPostBackEntity.setAddEvent8(postBackEntity.getAddEvent8());
+        errorPostBackEntity.setAddEvent9(postBackEntity.getAddEvent9());
+        errorPostBackEntity.setAddEvent10(postBackEntity.getAddEvent10());
+        errorPostBackEntity.setExchange(postBackEntity.getExchange());
+        errorPostBackEntity.setIdc(postBackEntity.getIdc());
+        errorPostBackEntity.setIdo(postBackEntity.getIdo());
 
         return errorPostBackEntity;
     }

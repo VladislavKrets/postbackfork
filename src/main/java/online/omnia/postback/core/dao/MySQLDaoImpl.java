@@ -39,6 +39,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(ExchangeEntity.class)
                 .addAnnotatedClass(CurrencyEntity.class)
                 .addAnnotatedClass(StatusEventsEntity.class)
+                .addAnnotatedClass(PostBackEntity1.class)
                 .configure("/hibernate.cfg.xml");
         /*secondDbConfiguration  = new Configuration()
                 .addAnnotatedClass(PostBackEntity.class)
@@ -121,7 +122,8 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets event from db
-     * @param status postback status
+     *
+     * @param status  postback status
      * @param advName postback advname
      * @return the last event whis is in db
      */
@@ -152,6 +154,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets postback by transactionid from db
+     *
      * @param transactionId postback transactionid
      * @return entity of postback
      */
@@ -185,6 +188,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method adds invalid postback to db
+     *
      * @param errorPostBackEntity entity of invalid postback
      */
     public synchronized void addErrorPostback(ErrorPostBackEntity errorPostBackEntity) {
@@ -221,6 +225,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method adds postback to db
+     *
      * @param postBackEntity entity which we get after parsing the url
      */
     @Override
@@ -247,8 +252,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 FileWorkingUtils.writeNotSentPostback(new java.sql.Date(System.currentTimeMillis()),
                         new Time(System.currentTimeMillis()), postBackEntity.getFullURL());
                 isWritten = true;
@@ -259,6 +263,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets CurrencyEntity by currency from db
+     *
      * @param currency gets from postback for exchanging
      * @return entity of curency from db
      */
@@ -272,12 +277,10 @@ public class MySQLDaoImpl implements MySQLDao {
                         .setParameter("currency", currency)
                         .getSingleResult();
                 break;
-            }
-            catch (NoResultException e) {
+            } catch (NoResultException e) {
                 currencyEntity = null;
                 break;
-            }
-            catch (PersistenceException e) {
+            } catch (PersistenceException e) {
                 e.printStackTrace();
                 try {
                     System.out.println("Can't connect to db");
@@ -293,7 +296,6 @@ public class MySQLDaoImpl implements MySQLDao {
     }
 
     /**
-     *
      * @param id of currency entity
      * @return exchange entity
      */
@@ -324,6 +326,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets adverts from db
+     *
      * @return list of adverts
      */
     @Override
@@ -353,6 +356,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets trackers of db
+     *
      * @return list of trackers
      */
     @Override
@@ -380,6 +384,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets affiliates from db
+     *
      * @return list affiliates
      */
     @Override
@@ -407,6 +412,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets affiliate by afid from db
+     *
      * @param afid parameter from postback
      * @return affilliate
      */
@@ -440,6 +446,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets postback by clickid
+     *
      * @param clickId parameter from postback
      * @return postback entity
      */
@@ -481,6 +488,7 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets postback from db by url
+     *
      * @param fullUrl url of postback
      * @return postback
      */
@@ -522,9 +530,10 @@ public class MySQLDaoImpl implements MySQLDao {
 
     /**
      * Method gets postback by clickid, transactionid and status from db
-     * @param clickId postback parameter
+     *
+     * @param clickId       postback parameter
      * @param transactionId postback parameter
-     * @param status postback parameter
+     * @param status        postback parameter
      * @return postback
      */
     public PostBackEntity getPostbackByClickIdTransactionIdStatus(String clickId, String transactionId, String status) {
@@ -535,15 +544,15 @@ public class MySQLDaoImpl implements MySQLDao {
             try {
                 session = masterDbSessionFactory.openSession();
 
-                    postBackEntities = session.createQuery("from PostBackEntity where clickid=:clickId and transactionid=:transactionId and status=:status",
-                            PostBackEntity.class)
-                            .setParameter("clickId", clickId)
-                            .setParameter("transactionId", transactionId)
-                            .setParameter("status", status)
-                            .getResultList();
-                    if (postBackEntities.isEmpty()) return null;
-                    session.close();
-                    return postBackEntities.get(0);
+                postBackEntities = session.createQuery("from PostBackEntity where clickid=:clickId and transactionid=:transactionId and status=:status",
+                        PostBackEntity.class)
+                        .setParameter("clickId", clickId)
+                        .setParameter("transactionId", transactionId)
+                        .setParameter("status", status)
+                        .getResultList();
+                if (postBackEntities.isEmpty()) return null;
+                session.close();
+                return postBackEntities.get(0);
             } catch (PersistenceException e) {
                 try {
                     System.out.println("Can't connect to db");
@@ -555,6 +564,7 @@ public class MySQLDaoImpl implements MySQLDao {
             }
         }
     }
+
     public boolean isPostbackByClickidAndTransactonId(String clickid, String transactionId) {
         Session session = null;
         List<PostBackEntity> postBackEntities = null;
@@ -577,8 +587,66 @@ public class MySQLDaoImpl implements MySQLDao {
             }
         }
     }
+
+    public boolean isTrackerWithSecondPrefix(String prefix, String secondPrefix) {
+        Session session = null;
+        List<TrackerEntity> trackerEntities;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                trackerEntities = session.createQuery("from TrackerEntity where prefix=:prefix and second_prefix=:secondPrefix", TrackerEntity.class)
+                        .setParameter("prefix", prefix)
+                        .setParameter("secondPrefix", secondPrefix)
+                        .getResultList();
+                session.close();
+                return !trackerEntities.isEmpty();
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void addPostback1(PostBackEntity1 postBackEntity1) {
+        Session session = null;
+        boolean isWritten = false;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                session.beginTransaction();
+                session.save(postBackEntity1);
+                session.getTransaction().commit();
+                break;
+            } catch (PersistenceException e) {
+                try {
+                    if (!isWritten) {
+                        FileWorkingUtils.writeNotSentPostback(new java.sql.Date(System.currentTimeMillis()),
+                                new Time(System.currentTimeMillis()), postBackEntity1.getFullURL());
+                        isWritten = true;
+                    }
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            } catch (Exception e) {
+                FileWorkingUtils.writeNotSentPostback(new java.sql.Date(System.currentTimeMillis()),
+                        new Time(System.currentTimeMillis()), postBackEntity1.getFullURL());
+                isWritten = true;
+            }
+        }
+        session.close();
+    }
+
     /**
      * Method gets tracker by prefix from db
+     *
      * @param prefix postback parameter
      * @return tracker
      */

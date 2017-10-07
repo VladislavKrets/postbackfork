@@ -140,7 +140,10 @@ public class MainController {
         addingEventToPostback(postBackEntity);
 
         if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) != null) {
-            MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+            if (MySQLDaoImpl.getInstance().isTrackerWithSecondPrefix(postBackEntity.getPrefix(), postBackEntity.getSecondPrefix())) {
+                MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+            }
+            else MySQLDaoImpl.getInstance().addPostback1(postbackHandler.createPostbackEntity1(postBackEntity));
         }
         else MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
 

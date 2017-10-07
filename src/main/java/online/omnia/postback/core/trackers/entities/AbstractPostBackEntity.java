@@ -117,6 +117,12 @@ public abstract class AbstractPostBackEntity {
     private String addEvent10;
     @Column(name = "exchange")
     private int exchange;
+    @Column(name = "idc")
+    private String idc;
+    @Column(name = "ido")
+    private String ido;
+    @Column(name = "second_prefix")
+    private String secondPrefix;
     public AbstractPostBackEntity() {
         clickId = "";
         currency = "";
@@ -161,7 +167,34 @@ public abstract class AbstractPostBackEntity {
         addEvent8 = "";
         addEvent9 = "";
         addEvent10 = "";
+        idc = "";
+        ido = "";
+        secondPrefix = "";
 
+    }
+
+    public String getIdc() {
+        return idc;
+    }
+
+    public void setIdc(String idc) {
+        this.idc = idc;
+    }
+
+    public String getIdo() {
+        return ido;
+    }
+
+    public void setIdo(String ido) {
+        this.ido = ido;
+    }
+
+    public String getSecondPrefix() {
+        return secondPrefix;
+    }
+
+    public void setSecondPrefix(String secondPrefix) {
+        this.secondPrefix = secondPrefix;
     }
 
     public int getId() {
