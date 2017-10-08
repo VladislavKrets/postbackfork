@@ -36,7 +36,8 @@ public class TrackerEntity {
     private String click;
     @Column(name = "second_prefix")
     private String secondPrefix;
-
+    @Column(name = "ido_prefix")
+    private String idoPrefix;
     public TrackerEntity() {
     }
 
@@ -86,5 +87,9 @@ public class TrackerEntity {
 
     public String getSecondPrefix() {
         return secondPrefix;
+    }
+
+    public String getIdoPrefix() {
+        return idoPrefix;
     }
 }

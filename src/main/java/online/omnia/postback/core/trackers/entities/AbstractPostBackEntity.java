@@ -123,6 +123,8 @@ public abstract class AbstractPostBackEntity {
     private String ido;
     @Column(name = "second_prefix")
     private String secondPrefix;
+    @Transient
+    private String idoPrefix;
     public AbstractPostBackEntity() {
         clickId = "";
         currency = "";
@@ -655,5 +657,13 @@ public abstract class AbstractPostBackEntity {
 
     public void setExchange(int exchange) {
         this.exchange = exchange;
+    }
+
+    public String getIdoPrefix() {
+        return idoPrefix;
+    }
+
+    public void setIdoPrefix(String idoPrefix) {
+        this.idoPrefix = idoPrefix;
     }
 }

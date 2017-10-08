@@ -588,15 +588,16 @@ public class MySQLDaoImpl implements MySQLDao {
         }
     }
 
-    public boolean isTrackerWithSecondPrefix(String prefix, String secondPrefix) {
+    public boolean isTrackerWithSecondPrefix(String prefix, String secondPrefix, String idoPrefix) {
         Session session = null;
         List<TrackerEntity> trackerEntities;
         while (true) {
             try {
                 session = masterDbSessionFactory.openSession();
-                trackerEntities = session.createQuery("from TrackerEntity where prefix=:prefix and second_prefix=:secondPrefix", TrackerEntity.class)
+                trackerEntities = session.createQuery("from TrackerEntity where prefix=:prefix" +
+                        (secondPrefix.isEmpty() ? "" : " and second_prefix=" + secondPrefix)
+                        + (idoPrefix.isEmpty() ? "" : " and ido_prefix=" + idoPrefix), TrackerEntity.class)
                         .setParameter("prefix", prefix)
-                        .setParameter("secondPrefix", secondPrefix)
                         .getResultList();
                 session.close();
                 return !trackerEntities.isEmpty();

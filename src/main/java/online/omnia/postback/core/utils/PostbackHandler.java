@@ -140,7 +140,7 @@ public class PostbackHandler {
         }
         if (parameters.containsKey("ido") && parameters.get("ido").contains("_")) {
             String[] ido = parameters.get("ido").split("_");
-            postBackEntity.setSecondPrefix(ido[0]);
+            postBackEntity.setIdoPrefix(ido[0]);
             postBackEntity.setIdo(ido[1]);
             ido = null;
         }
