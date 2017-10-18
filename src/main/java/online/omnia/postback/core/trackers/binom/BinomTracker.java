@@ -59,7 +59,7 @@ public class BinomTracker {
             throw new NoClickIdException();
 
         TrackerEntity trackerEntity = MySQLDaoImpl.getInstance().getTrackerByPrefix(postBackEntity.getPrefix());
-        StringBuilder urlBuilder = new StringBuilder(baseUrl + "/" + trackerEntity.getClick() + "?");
+        StringBuilder urlBuilder = new StringBuilder(baseUrl + trackerEntity.getClick() + "?");
         urlBuilder.append(trackerEntity.getClickid()).append("=").append(URLEncoder.encode(postBackEntity.getClickId(), "UTF-8"));
         if (postBackEntity.getSum() != 0) urlBuilder.append("&").append(trackerEntity.getSum()).append("=").append(postBackEntity.getSum());
         if (!postBackEntity.getStatus().isEmpty()) urlBuilder.append("&").append(trackerEntity.getStatus1Name())

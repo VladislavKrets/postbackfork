@@ -34,8 +34,8 @@ public class TrackerEntity {
     private String indexPhp;
     @Column(name = "click")
     private String click;
-    @Column(name = "second_prefix")
-    private String secondPrefix;
+    @Column(name = "idc_prefix")
+    private String idcPrefix;
     @Column(name = "ido_prefix")
     private String idoPrefix;
     public TrackerEntity() {
@@ -85,8 +85,8 @@ public class TrackerEntity {
         return status2Name;
     }
 
-    public String getSecondPrefix() {
-        return secondPrefix;
+    public String getIdcPrefix() {
+        return idcPrefix;
     }
 
     public String getIdoPrefix() {

@@ -3,10 +3,11 @@ package online.omnia.postback.core.utils;
 import online.omnia.postback.core.dao.MySQLDaoImpl;
 import online.omnia.postback.core.trackers.entities.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Class which can parse url and create PostbackEntities
@@ -14,10 +15,11 @@ import java.util.Random;
 public class PostbackHandler {
     /**
      * Method parses url and gets postback parameters
+     *
      * @param url of postback
      * @return map of postback parameters
      */
-    public Map<String, String> getPostbackParameters(String url){
+    public Map<String, String> getPostbackParameters(String url) {
 
         System.out.println(url);
         Map<String, String> parametersMap = new HashMap<>();
@@ -25,7 +27,7 @@ public class PostbackHandler {
 
         String[] urlParts = url.split("\\?");
 
-        if (urlParts.length != 2){
+        if (urlParts.length != 2) {
             System.out.println("No ?");
             System.out.println(Arrays.asList(urlParts));
             return parametersMap;
@@ -38,8 +40,7 @@ public class PostbackHandler {
             if (pair.length == 0) return parametersMap;
             if (pair.length == 2) {
                 parametersMap.put(pair[0], pair[1]);
-            }
-            else if (pair.length == 1) {
+            } else if (pair.length == 1) {
                 parametersMap.put(pair[0], "");
             }
             return parametersMap;
@@ -51,8 +52,7 @@ public class PostbackHandler {
             pairs = keyValuePair.split("=");
             if (pairs.length == 2) {
                 parametersMap.put(pairs[0], pairs[1]);
-            }
-            else if (pairs.length == 1) {
+            } else if (pairs.length == 1) {
                 parametersMap.put(pairs[0], "");
             }
         }
@@ -62,10 +62,11 @@ public class PostbackHandler {
 
     /**
      * Creates PostBackEntity using url parameters
+     *
      * @param parameters map which we get after parsing url
      * @return postback entity
      */
-    public PostBackEntity fillPostback(Map<String, String> parameters) {
+    public PostBackEntity fillPostback(Map<String, String> parameters) throws UnsupportedEncodingException {
         PostBackEntity postBackEntity = new PostBackEntity();
 
         String clickid = parameters.containsKey("clickid") ? parameters.get("clickid") : null;
@@ -73,7 +74,7 @@ public class PostbackHandler {
         int prefixNumber;
         int clickIdLength = (clickid != null && clickid.length() != 0) ? clickid.length() : 0;
         System.out.println("Clickid = " + clickid);
-        if (clickIdLength > 0 && clickid.contains("_")){
+        if (clickIdLength > 0 && clickid.contains("_")) {
             prefixNumber = clickid.indexOf("_");
             prefix = clickid.substring(0, prefixNumber);
             if (!isPrefixInTrackers(prefix)) prefix = null;
@@ -83,29 +84,90 @@ public class PostbackHandler {
         postBackEntity.setClickId(clickid != null ? (clickid.length() < 200 ? clickid : clickid.substring(0, 200)) : null);
         postBackEntity.setPrefix(prefix != null ? (prefix.length() < 50 ? prefix : prefix.substring(0, 50)) : null);
 
-        if (parameters.containsKey("sum") && parameters.get("sum").matches("(\\d+.\\d+)|(\\d+)")) postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
-        if (parameters.containsKey("currency")) postBackEntity.setCurrency(parameters.get("currency").length() < 15 ? parameters.get("currency") : parameters.get("currency").substring(0, 15));
-        else postBackEntity.setCurrency("USD");
-        if (parameters.containsKey("goal")) postBackEntity.setGoal(parameters.get("goal").length() < 50 ? parameters.get("goal") : parameters.get("goal").substring(0, 50));
-        if (parameters.containsKey("status")) postBackEntity.setStatus(parameters.get("status").length() < 50 ? parameters.get("status") : parameters.get("status").substring(0, 50));
-        if (parameters.containsKey("advname")) postBackEntity.setAdvName(parameters.get("advname").length() < 100 ? parameters.get("advname") : parameters.get("advname").substring(0, 100));
-        if (parameters.containsKey("offername")) postBackEntity.setOfferName(parameters.get("offername").length() < 200 ? parameters.get("offername") : parameters.get("offername").substring(0, 200));
-        if (parameters.containsKey("transactionid")) postBackEntity.setTransactionId(parameters.get("transactionid").length() < 100 ? parameters.get("transactionid") : parameters.get("transactionid").substring(0, 100));
-        if (parameters.containsKey("txid")) postBackEntity.setTransactionId(parameters.get("txid").length() < 100 ? parameters.get("txid") : parameters.get("txid").substring(0, 100));
-        if (parameters.containsKey("idfa")) postBackEntity.setIDFA(parameters.get("idfa").length() < 50 ? parameters.get("idfa") : parameters.get("idfa").substring(0, 50));
-        if (parameters.containsKey("gaid")) postBackEntity.setGaId(parameters.get("gaid").length() < 50 ? parameters.get("gaid") : parameters.get("gaid").substring(0, 50));
-        if (parameters.containsKey("ip")) postBackEntity.setIpAddress(parameters.get("ip").length() < 20 ? parameters.get("ip") : parameters.get("ip").substring(0, 20));
-        if (parameters.containsKey("secret")) postBackEntity.setSecretKey(parameters.get("secret").length() < 100 ? parameters.get("secret") : parameters.get("secret").substring(0, 100));
-        if (parameters.containsKey("t1")) postBackEntity.setT1(parameters.get("t1").length() < 100 ? parameters.get("t1") : parameters.get("t1").substring(0, 100));
-        if (parameters.containsKey("t2")) postBackEntity.setT2(parameters.get("t2").length() < 100 ? parameters.get("t2") : parameters.get("t2").substring(0, 100));
-        if (parameters.containsKey("t3")) postBackEntity.setT3(parameters.get("t3").length() < 100 ? parameters.get("t3") : parameters.get("t3").substring(0, 100));
-        if (parameters.containsKey("t4")) postBackEntity.setT4(parameters.get("t4").length() < 100 ? parameters.get("t4") : parameters.get("t4").substring(0, 100));
-        if (parameters.containsKey("t5")) postBackEntity.setT5(parameters.get("t5").length() < 100 ? parameters.get("t5") : parameters.get("t5").substring(0, 100));
-        if (parameters.containsKey("t6")) postBackEntity.setT6(parameters.get("t6").length() < 100 ? parameters.get("t6") : parameters.get("t6").substring(0, 100));
-        if (parameters.containsKey("t7")) postBackEntity.setT7(parameters.get("t7").length() < 100 ? parameters.get("t7") : parameters.get("t7").substring(0, 100));
-        if (parameters.containsKey("t8")) postBackEntity.setT8(parameters.get("t8").length() < 100 ? parameters.get("t8") : parameters.get("t8").substring(0, 100));
-        if (parameters.containsKey("t9")) postBackEntity.setT9(parameters.get("t9").length() < 100 ? parameters.get("t9") : parameters.get("t9").substring(0, 100));
-        if (parameters.containsKey("t10")) postBackEntity.setT10(parameters.get("t10").length() < 100 ? parameters.get("t10") : parameters.get("t10").substring(0, 100));
+        if (parameters.containsKey("sum") && parameters.get("sum").matches("(\\d+.\\d+)|(\\d+)"))
+            postBackEntity.setSum(Double.parseDouble(parameters.get("sum")));
+        if (parameters.containsKey("currency")) {
+            String currency = URLDecoder.decode(parameters.get("currency"), "UTF-8");
+            postBackEntity.setCurrency(currency.length() < 15 ? currency : currency.substring(0, 15));
+        } else postBackEntity.setCurrency("USD");
+        if (parameters.containsKey("goal")) {
+            String goal = URLDecoder.decode(parameters.get("goal"), "UTF-8");
+            postBackEntity.setGoal(goal.length() < 50 ? goal : goal.substring(0, 50));
+        }
+        if (parameters.containsKey("status")) {
+            String status = URLDecoder.decode(parameters.get("status"), "UTF-8");
+            postBackEntity.setStatus(status.length() < 50 ? status : status.substring(0, 50));
+        }
+        if (parameters.containsKey("advname")) {
+            String advname = URLDecoder.decode(parameters.get("advname"), "UTF-8");
+            postBackEntity.setAdvName(advname.length() < 100 ? advname : advname.substring(0, 100));
+        }
+        if (parameters.containsKey("offername")) {
+            String offerName = URLDecoder.decode(parameters.get("offername"), "UTF-8");
+            postBackEntity.setOfferName(offerName.length() < 200 ? offerName : offerName.substring(0, 200));
+        }
+        if (parameters.containsKey("transactionid")) {
+            String transactionid = URLDecoder.decode(parameters.get("transactionid"), "UTF-8");
+            postBackEntity.setTransactionId(transactionid.length() < 100 ? transactionid : transactionid.substring(0, 100));
+        }
+        if (parameters.containsKey("txid")) {
+            String txid = URLDecoder.decode(parameters.get("txid"), "UTF-8");
+            postBackEntity.setTransactionId(txid.length() < 100 ? txid : txid.substring(0, 100));
+        }
+        if (parameters.containsKey("idfa")) {
+            String idfa = URLDecoder.decode(parameters.get("idfa"), "UTF-8");
+            postBackEntity.setIDFA(idfa.length() < 50 ? idfa : idfa.substring(0, 50));
+        }
+        if (parameters.containsKey("gaid")) {
+            String gaid = URLDecoder.decode(parameters.get("gaid"), "UTF-8");
+            postBackEntity.setGaId(gaid.length() < 50 ? gaid : gaid.substring(0, 50));
+        }
+        if (parameters.containsKey("ip"))
+            postBackEntity.setIpAddress(parameters.get("ip").length() < 20 ? parameters.get("ip") : parameters.get("ip").substring(0, 20));
+        if (parameters.containsKey("secret")) {
+            String secret = URLDecoder.decode(parameters.get("secret"), "UTF-8");
+            postBackEntity.setSecretKey(secret.length() < 100 ? secret : secret.substring(0, 100));
+        }
+        if (parameters.containsKey("t1")) {
+            String t = URLDecoder.decode(parameters.get("t1"), "UTF-8");
+            postBackEntity.setT1(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t2")) {
+            String t = URLDecoder.decode(parameters.get("t2"), "UTF-8");
+            postBackEntity.setT2(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t3")) {
+            String t = URLDecoder.decode(parameters.get("t3"), "UTF-8");
+            postBackEntity.setT3(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t4")) {
+            String t = URLDecoder.decode(parameters.get("t4"), "UTF-8");
+            postBackEntity.setT4(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t5")) {
+            String t = URLDecoder.decode(parameters.get("t5"), "UTF-8");
+            postBackEntity.setT5(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t6")) {
+            String t = URLDecoder.decode(parameters.get("t6"), "UTF-8");
+            postBackEntity.setT6(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t7")) {
+            String t = URLDecoder.decode(parameters.get("t7"), "UTF-8");
+            postBackEntity.setT7(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t8")) {
+            String t = URLDecoder.decode(parameters.get("t8"), "UTF-8");
+            postBackEntity.setT8(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t9")) {
+            String t = URLDecoder.decode(parameters.get("t9"), "UTF-8");
+            postBackEntity.setT9(t.length() < 100 ? t : t.substring(0, 100));
+        }
+        if (parameters.containsKey("t10")) {
+            String t = URLDecoder.decode(parameters.get("t10"), "UTF-8");
+            postBackEntity.setT10(t.length() < 100 ? t : t.substring(0, 100));
+        }
         if (parameters.containsKey("event1")) postBackEntity.setEvent1(parameters.get("event1"));
         if (parameters.containsKey("event2")) postBackEntity.setEvent2(parameters.get("event2"));
         if (parameters.containsKey("event3")) postBackEntity.setEvent3(parameters.get("event3"));
@@ -127,21 +189,24 @@ public class PostbackHandler {
         if (parameters.containsKey("add_event9")) postBackEntity.setAddEvent9(parameters.get("add_event9"));
         if (parameters.containsKey("add_event10")) postBackEntity.setAddEvent10(parameters.get("add_event10"));
 
-        if (parameters.containsKey("offerid")) postBackEntity.setOfferId(parameters.get("offerid").length() < 50 ? parameters.get("offerid") : parameters.get("offerid").substring(0, 50));
-        if (parameters.containsKey("afid") && parameters.get("afid").matches("\\d+")) postBackEntity.setAfid(Integer.parseInt(parameters.get("afid")));
-        if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+")) postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
+        if (parameters.containsKey("offerid"))
+            postBackEntity.setOfferId(parameters.get("offerid").length() < 50 ? parameters.get("offerid") : parameters.get("offerid").substring(0, 50));
+        if (parameters.containsKey("afid") && parameters.get("afid").matches("\\d+"))
+            postBackEntity.setAfid(Integer.parseInt(parameters.get("afid")));
+        if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+"))
+            postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
         else postBackEntity.setPostbackSend(2);
         postBackEntity.setDuplicate("original");
         if (parameters.containsKey("idc") && parameters.get("idc").contains("_")) {
             String[] idc = parameters.get("idc").split("_");
-            postBackEntity.setSecondPrefix(idc[0]);
-            postBackEntity.setIdc(idc[1]);
+            postBackEntity.setIdcPrefix(idc[0]);
+            postBackEntity.setIdc(idc[1].length() < 50 ? idc[1] : idc[1].substring(0, 50));
             idc = null;
         }
         if (parameters.containsKey("ido") && parameters.get("ido").contains("_")) {
             String[] ido = parameters.get("ido").split("_");
             postBackEntity.setIdoPrefix(ido[0]);
-            postBackEntity.setIdo(ido[1]);
+            postBackEntity.setIdo(ido[1].length() < 50 ? ido[1] : ido[1].substring(0, 50));
             ido = null;
         }
 
@@ -151,6 +216,7 @@ public class PostbackHandler {
 
     /**
      * Method checks if events in postback are empty
+     *
      * @param postBackEntity entity which we get after parsing the url
      * @return checking if events empty
      */
@@ -223,8 +289,10 @@ public class PostbackHandler {
 
         return postBackEntity1;
     }
+
     /**
      * Method creates ErrorPostBackEntity from PostBackEntity
+     *
      * @param postBackEntity entity which we get after parsing the url
      * @return error postback
      */
@@ -292,6 +360,7 @@ public class PostbackHandler {
 
     /**
      * Method checks is postback partial
+     *
      * @param clickId parameter of postback
      * @return checking if postback is partial
      */
@@ -303,6 +372,7 @@ public class PostbackHandler {
 
     /**
      * Method checks is transactionid in db
+     *
      * @param transactionId parameter of postback
      * @return checking if transaction is in db
      */
@@ -314,6 +384,7 @@ public class PostbackHandler {
 
     /**
      * Method checks is prefix in db
+     *
      * @param prefix parameter of postback
      * @return checking if prefix in db
      */

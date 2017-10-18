@@ -21,7 +21,7 @@ public class CurrencyEntity {
     @Column(name = "sync")
     private int sync;
     @Column(name = "count")
-    private int count;
+    private Integer count;
 
 
     public int getId() {
@@ -40,7 +40,7 @@ public class CurrencyEntity {
         return sync;
     }
 
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 }

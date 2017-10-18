@@ -16,12 +16,10 @@ public class AffiliatesEntity {
     private int afid;
     @Column(name = "afname")
     private String afName;
-    @Column(name = "afaffiseid")
+    @Column(name = "buyer_id")
     private String afaffiseId;
     @Column(name = "description")
     private String description;
-    @Column(name = "affise_clickid")
-    private String affiseClickid;
 
     public int getAfid() {
         return afid;
@@ -39,7 +37,4 @@ public class AffiliatesEntity {
         return description;
     }
 
-    public String getAffiseClickid() {
-        return affiseClickid;
-    }
 }

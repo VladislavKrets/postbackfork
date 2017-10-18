@@ -121,8 +121,8 @@ public abstract class AbstractPostBackEntity {
     private String idc;
     @Column(name = "ido")
     private String ido;
-    @Column(name = "second_prefix")
-    private String secondPrefix;
+    @Transient
+    private String idcPrefix;
     @Transient
     private String idoPrefix;
     public AbstractPostBackEntity() {
@@ -171,7 +171,8 @@ public abstract class AbstractPostBackEntity {
         addEvent10 = "";
         idc = "";
         ido = "";
-        secondPrefix = "";
+        idcPrefix = "";
+        idoPrefix = "";
 
     }
 
@@ -191,12 +192,12 @@ public abstract class AbstractPostBackEntity {
         this.ido = ido;
     }
 
-    public String getSecondPrefix() {
-        return secondPrefix;
+    public String getIdcPrefix() {
+        return idcPrefix;
     }
 
-    public void setSecondPrefix(String secondPrefix) {
-        this.secondPrefix = secondPrefix;
+    public void setIdcPrefix(String idcPrefix) {
+        this.idcPrefix = idcPrefix;
     }
 
     public int getId() {

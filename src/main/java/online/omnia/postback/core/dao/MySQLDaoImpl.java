@@ -10,6 +10,7 @@ import org.hibernate.cfg.Configuration;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
@@ -564,6 +565,28 @@ public class MySQLDaoImpl implements MySQLDao {
             }
         }
     }
+    public boolean isPostbackByClickidAndStatus(String clickid, String status) {
+        Session session = null;
+        List<PostBackEntity> postBackEntities = null;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                postBackEntities = session.createQuery("from PostBackEntity where clickid=:clickId and status=:status", PostBackEntity.class)
+                        .setParameter("clickId", clickid)
+                        .setParameter("status", status)
+                        .getResultList();
+                return !postBackEntities.isEmpty();
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
 
     public boolean isPostbackByClickidAndTransactonId(String clickid, String transactionId) {
         Session session = null;
@@ -588,19 +611,25 @@ public class MySQLDaoImpl implements MySQLDao {
         }
     }
 
-    public boolean isTrackerWithSecondPrefix(String prefix, String secondPrefix, String idoPrefix) {
+    public List<TrackerEntity> getTrackerWithSecondPrefix(String prefix, String idcPrefix, String idoPrefix) {
         Session session = null;
         List<TrackerEntity> trackerEntities;
         while (true) {
             try {
                 session = masterDbSessionFactory.openSession();
-                trackerEntities = session.createQuery("from TrackerEntity where prefix=:prefix" +
-                        (secondPrefix.isEmpty() ? "" : " and second_prefix=" + secondPrefix)
-                        + (idoPrefix.isEmpty() ? "" : " and ido_prefix=" + idoPrefix), TrackerEntity.class)
-                        .setParameter("prefix", prefix)
-                        .getResultList();
+                Query query = session.createQuery("from TrackerEntity where prefix=:prefix" +
+                        (idcPrefix.isEmpty() ? "" : " and idc_prefix=:idcPrefix")
+                        + (idoPrefix.isEmpty() ? "" : " and ido_prefix=:idoPrefix"), TrackerEntity.class)
+                        .setParameter("prefix", prefix);
+                if (!idcPrefix.isEmpty()) {
+                    query = query.setParameter("idcPrefix", idcPrefix);
+                }
+                if (!idoPrefix.isEmpty()) {
+                    query = query.setParameter("idoPrefix", idoPrefix);
+                }
+                trackerEntities = query.getResultList();
                 session.close();
-                return !trackerEntities.isEmpty();
+                return trackerEntities;
             } catch (PersistenceException e) {
                 try {
                     System.out.println("Can't connect to db");

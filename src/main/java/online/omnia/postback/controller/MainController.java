@@ -9,8 +9,10 @@ import online.omnia.postback.core.utils.FileWorkingUtils;
 import online.omnia.postback.core.utils.PostbackHandler;
 import org.apache.log4j.Logger;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,7 +53,12 @@ public class MainController {
 
         System.out.println("Creating mySQLDao entity");
         System.out.println("Creating postback entity");
-        PostBackEntity postBackEntity = postbackHandler.fillPostback(parameters);
+        PostBackEntity postBackEntity = null;
+        try {
+            postBackEntity = postbackHandler.fillPostback(parameters);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         System.out.println("Setting date and time");
         postBackEntity.setDate(new Date(currentDate.getTime()));
         postBackEntity.setTime(new Time(currentDate.getTime()));
@@ -141,8 +148,11 @@ public class MainController {
 
         if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) != null) {
             if (!postBackEntity.getIdc().isEmpty() || !postBackEntity.getIdo().isEmpty()) {
-                if (MySQLDaoImpl.getInstance().isTrackerWithSecondPrefix(postBackEntity.getPrefix(),
-                        postBackEntity.getSecondPrefix(), postBackEntity.getIdoPrefix())) {
+                List<TrackerEntity> trackerEntity = MySQLDaoImpl.getInstance().getTrackerWithSecondPrefix(postBackEntity.getPrefix(),
+                        postBackEntity.getIdcPrefix(), postBackEntity.getIdoPrefix());
+                if (!trackerEntity.isEmpty()) {
+                    TrackerEntity entity = trackerEntity.get(0);
+                    System.out.println(entity);
                     MySQLDaoImpl.getInstance().addPostback(postBackEntity);
                 } else MySQLDaoImpl.getInstance().addPostback1(postbackHandler.createPostbackEntity1(postBackEntity));
             }
@@ -332,6 +342,7 @@ public class MainController {
     }
 
     private boolean checkDuplicates(PostBackEntity postBackEntity) {
+
         if (!isAllEventsEmpty(postBackEntity)) {
             if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty()) {
                 if (MySQLDaoImpl.getInstance().isPostbackByClickidAndTransactonId(postBackEntity.getClickId(),
@@ -347,9 +358,6 @@ public class MainController {
                 }
             }
         }
-        else if (MySQLDaoImpl.getInstance().isPostbackWithPrefixAndClickId(postBackEntity.getPrefix(), postBackEntity.getClickId())) {
-            postBackEntity.setDuplicate("PARTIAL");
-        }
         else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty() &&
                 !postBackEntity.getStatus().isEmpty()) {
             if (MySQLDaoImpl.getInstance().getPostbackByClickIdTransactionIdStatus(postBackEntity.getClickId(),
@@ -363,6 +371,17 @@ public class MainController {
                 return true;
             }
         }
+        else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getStatus().isEmpty()) {
+            if (!postBackEntity.getStatus().isEmpty() && !MySQLDaoImpl.getInstance().isPostbackByClickidAndStatus(postBackEntity.getClickId(), postBackEntity.getStatus())) {
+                postBackEntity.setDuplicate("FULL");
+                return false;
+            }
+            else if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
+                postBackEntity.setDuplicate("PARTIAL");
+                return true;
+            }
+
+        }
         else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty()) {
             if (MySQLDaoImpl.getInstance().isPostbackByClickidAndTransactonId(postBackEntity.getClickId(), postBackEntity.getTransactionId())) {
                 postBackEntity.setDuplicate("FULL");
@@ -373,12 +392,16 @@ public class MainController {
                 return true;
             }
         }
+        /*else if (MySQLDaoImpl.getInstance().isPostbackWithPrefixAndClickId(postBackEntity.getPrefix(), postBackEntity.getClickId())) {
+            postBackEntity.setDuplicate("PARTIAL");
+        }*/
         else if (!postBackEntity.getClickId().isEmpty()) {
             if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
                 postBackEntity.setDuplicate("FULL");
                 return false;
             }
         }
+
         return true;
     }
 }
