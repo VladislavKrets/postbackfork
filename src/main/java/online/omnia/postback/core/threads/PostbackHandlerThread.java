@@ -5,8 +5,7 @@ import online.omnia.postback.queue.QueueWriter;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.Date;
 
 /**
@@ -61,18 +60,26 @@ public class PostbackHandlerThread implements Runnable{
             //MainController controller = new MainController();
             //System.out.println("sending postback to controller");
             //String answer = controller.sendPostback(host + urlBuilder.toString());
-            QueueWriter.writeUrl(host + urlBuilder.toString());
+            //QueueWriter.writeUrl(host + urlBuilder.toString());
+            SocketAddress socketAddress = socket.getRemoteSocketAddress();
+            String ip = null;
+
+            if (socketAddress instanceof InetSocketAddress) {
+                InetAddress inetAddress = ((InetSocketAddress)socketAddress).getAddress();
+                if (inetAddress instanceof Inet4Address)
+                    ip = inetAddress.toString().split("/")[1];
+                else if (inetAddress instanceof Inet6Address)
+                    ip = inetAddress.toString().split("/")[1];
+                else
+                    System.err.println("Not an IP address.");
+            } else {
+                System.err.println("Not an internet protocol socket.");
+            }
+            System.out.println("sending");
+            QueueWriter.sendMessage(host + urlBuilder.toString() + " " + ip);
             System.out.println("Open output stream");
             OutputStream outputStream = socket.getOutputStream();
-            outputStream.write("HTTP/1.1 200 OK\r\n".getBytes("UTF-8"));
-            outputStream.write("Status: 200\r\n".getBytes("UTF-8"));
-            outputStream.write("Server: nginx\r\n".getBytes("UTF-8"));
-            outputStream.write("Content-Type: text/html\r\n".getBytes("UTF-8"));
-            outputStream.write("Cache-Control: no-cache\r\n".getBytes("UTF-8"));
-            outputStream.write(("Date: " + new Date(System.currentTimeMillis()) + "\r\n").getBytes("UTF-8"));
-            outputStream.write("X-Content-Type-Options: noshiff\r\n".getBytes("UTF-8"));
-            outputStream.write("X-XSS-Protection: 1\r\n".getBytes("UTF-8"));
-            outputStream.write("X-Frame-Options: Deny\r\n\r\n".getBytes("UTF-8"));
+            outputStream.write("HTTP/1.1 200 OK\r\n\r\n".getBytes("UTF-8"));
             outputStream.write("OK".getBytes("UTF-8"));
             outputStream.close();
             socket.close();

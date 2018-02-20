@@ -32,10 +32,14 @@ public class MainController {
      * parses url, creates PostBackEntity
      * validates postbacks
      * sends postbacks to db and to trackers
+     *
      * @param postbackURL url of postback which we get from socket
      * @return serverAnswer
      */
     public String sendPostback(String postbackURL) {
+        String[] urlParams = postbackURL.split(" ");
+        postbackURL = urlParams[0];
+        //String ip = urlParams[1];
         currentDate = new java.util.Date(System.currentTimeMillis());
         Map<String, String> parameters = postbackHandler.getPostbackParameters(postbackURL);
         System.out.println("Parameters have been got");
@@ -64,7 +68,7 @@ public class MainController {
         postBackEntity.setTime(new Time(currentDate.getTime()));
         System.out.println("Setting url");
         postBackEntity.setFullURL(postbackURL);
-
+        //postBackEntity.setIpAddress(ip);
 
         System.out.println(postBackEntity.getPrefix());
         if (postbackHandler.isEventFilled(postBackEntity)) {
@@ -79,7 +83,7 @@ public class MainController {
             postBackEntity.setPrefix("");
             System.out.println("Adding to db");
             setExchange(postBackEntity);
-            MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
+            addPostBack(postbackHandler.createError(postBackEntity));
 
             System.out.println("Done");
             return "HTTP/1.1 200 OK\r\n";
@@ -112,6 +116,7 @@ public class MainController {
 
     /**
      * Method checks is postback in db by url
+     *
      * @param postbackUrl url of postback which we get from socket
      * @return result of checking
      */
@@ -123,6 +128,7 @@ public class MainController {
 
     /**
      * Method which send binom postback to db and to binom
+     *
      * @param postBackEntity entity which we get after parsing the url
      */
     public void binomHandler(PostBackEntity postBackEntity) {
@@ -135,11 +141,17 @@ public class MainController {
             setExchange(clone);
             postBackEntity.setExchange(clone.getExchange());
             System.out.println("Sending to binom");
-            String answer = binomTracker.sendPostback(clone);
-            System.out.println(answer.split(" ")[1]);
-            if (answer.split(" ")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
-            FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
-                    new Time(currentDate.getTime()), answer);
+            if (postBackEntity.getStatus() == null || MySQLDaoImpl.getInstance().getTrashByStatus(postBackEntity.getStatus()) == null) {
+                AdvRejectEntity advRejectEntity = MySQLDaoImpl.getInstance().getAdvReject(postBackEntity.getAdvName(), postBackEntity.getStatus());
+                if (advRejectEntity != null) clone.setStatus(advRejectEntity.getNewStatus());
+                String answer = binomTracker.sendPostback(clone);
+                System.out.println(answer.split(" ")[1]);
+                if (answer.split(" ")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
+                FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
+                        new Time(currentDate.getTime()), answer);
+            }
+            else FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
+                    new Time(currentDate.getTime()), postBackEntity.getFullURL());
         } catch (NoClickIdException | CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -153,17 +165,34 @@ public class MainController {
                 if (!trackerEntity.isEmpty()) {
                     TrackerEntity entity = trackerEntity.get(0);
                     System.out.println(entity);
-                    MySQLDaoImpl.getInstance().addPostback(postBackEntity);
-                } else MySQLDaoImpl.getInstance().addPostback1(postbackHandler.createPostbackEntity1(postBackEntity));
-            }
-            else MySQLDaoImpl.getInstance().addPostback(postBackEntity);
+                    addPostBack(postBackEntity);
+
+                } else addPostBack(postbackHandler.createPostbackEntity1(postBackEntity));
+            } else addPostBack(postBackEntity);
+        } else addPostBack(postbackHandler.createError(postBackEntity));
+
+    }
+
+    private void addPostBack(AbstractPostBackEntity postBackEntity) {
+        if (postBackEntity instanceof PostBackEntity) {
+            PostBackEntity entity = (PostBackEntity) postBackEntity;
+            MySQLDaoImpl.getInstance().addPostback(entity);
+
+        } else if (postBackEntity instanceof PostBackEntity1) {
+            PostBackEntity1 entity = (PostBackEntity1) postBackEntity;
+            MySQLDaoImpl.getInstance().addPostback1(entity);
+
+        } else if (postBackEntity instanceof ErrorPostBackEntity) {
+            ErrorPostBackEntity entity = (ErrorPostBackEntity) postBackEntity;
+            MySQLDaoImpl.getInstance().addErrorPostback(entity);
+
         }
-        else MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
 
     }
 
     /**
      * Method which send affise postback to db and to binom
+     *
      * @param postBackEntity entity which we get after parsing the url
      */
     private void affiseHandler(PostBackEntity postBackEntity) {
@@ -184,8 +213,7 @@ public class MainController {
 
             if (MySQLDaoImpl.getInstance().getAffiliateByAffid(postBackEntity.getAfid()) != null) {
                 MySQLDaoImpl.getInstance().addPostback(postBackEntity);
-            }
-            else MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
+            } else MySQLDaoImpl.getInstance().addErrorPostback(postbackHandler.createError(postBackEntity));
         } catch (NoClickIdException | CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -193,10 +221,12 @@ public class MainController {
 
     /**
      * Method which checks postback status, advname and changes events if it necessary
+     *
      * @param postBackEntity entity which we get after parsing the url
      */
     private void checkPostbackStatus(PostBackEntity postBackEntity) {
-        if (postBackEntity.getStatus().isEmpty() || postBackEntity.getAdvName().isEmpty() || postBackEntity.getSum() == 0) return;
+        if (postBackEntity.getStatus().isEmpty() || postBackEntity.getAdvName().isEmpty() || postBackEntity.getSum() == 0)
+            return;
         StatusEventsEntity statusEventsEntity = MySQLDaoImpl.getInstance()
                 .getEvent(postBackEntity.getStatus(), postBackEntity.getAdvName());
         if (statusEventsEntity == null) return;
@@ -206,7 +236,8 @@ public class MainController {
 
     /**
      * Method which chooses event and changes it
-     * @param postBackEntity entity which we get after parsing the url
+     *
+     * @param postBackEntity     entity which we get after parsing the url
      * @param statusEventsEntity entity which we get by status and advname from db
      */
     private void chooseEvent(PostBackEntity postBackEntity, StatusEventsEntity statusEventsEntity) {
@@ -287,6 +318,7 @@ public class MainController {
 
     /**
      * Method which realized exchanging currency to USD
+     *
      * @param postBackEntity entity which we get after parsing the url
      */
     public void setExchange(PostBackEntity postBackEntity) {
@@ -302,6 +334,7 @@ public class MainController {
 
     /**
      * Method which handles events before sending to db
+     *
      * @param postBackEntity entity which we get after parsing the url
      */
     private void addingEventToPostback(PostBackEntity postBackEntity) {
@@ -319,6 +352,7 @@ public class MainController {
 
     /**
      * Method which checks if events are empty
+     *
      * @param postBackEntity entity which we get after parsing the url
      * @return result of checking events
      */
@@ -332,6 +366,7 @@ public class MainController {
 
     /**
      * Method checks is affid in db
+     *
      * @param afid the value which contains in postback
      * @return result of checking
      */
@@ -350,44 +385,37 @@ public class MainController {
                     postBackEntity.setDuplicate("PARTIAL");
                     return true;
                 }
-            }
-            else if (!postBackEntity.getClickId().isEmpty()) {
+            } else if (!postBackEntity.getClickId().isEmpty()) {
                 if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
                     postBackEntity.setDuplicate("PARTIAL");
                     return true;
                 }
             }
-        }
-        else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty() &&
+        } else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty() &&
                 !postBackEntity.getStatus().isEmpty()) {
             if (MySQLDaoImpl.getInstance().getPostbackByClickIdTransactionIdStatus(postBackEntity.getClickId(),
                     postBackEntity.getTransactionId(), postBackEntity.getStatus()) != null) {
                 postBackEntity.setDuplicate("FULL");
                 return false;
-            }
-            else if (MySQLDaoImpl.getInstance().isPostbackByClickidAndTransactonId(postBackEntity.getClickId(),
+            } else if (MySQLDaoImpl.getInstance().isPostbackByClickidAndTransactonId(postBackEntity.getClickId(),
                     postBackEntity.getTransactionId())) {
                 postBackEntity.setDuplicate("PARTIAL");
                 return true;
             }
-        }
-        else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getStatus().isEmpty()) {
+        } else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getStatus().isEmpty()) {
             if (!postBackEntity.getStatus().isEmpty() && !MySQLDaoImpl.getInstance().isPostbackByClickidAndStatus(postBackEntity.getClickId(), postBackEntity.getStatus())) {
                 postBackEntity.setDuplicate("FULL");
                 return false;
-            }
-            else if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
+            } else if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
                 postBackEntity.setDuplicate("PARTIAL");
                 return true;
             }
 
-        }
-        else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty()) {
+        } else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getTransactionId().isEmpty()) {
             if (MySQLDaoImpl.getInstance().isPostbackByClickidAndTransactonId(postBackEntity.getClickId(), postBackEntity.getTransactionId())) {
                 postBackEntity.setDuplicate("FULL");
                 return false;
-            }
-            else if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
+            } else if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
                 postBackEntity.setDuplicate("PARTIAL");
                 return true;
             }

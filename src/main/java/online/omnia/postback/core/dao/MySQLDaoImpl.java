@@ -12,9 +12,12 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Class realizes working with db
@@ -41,6 +44,8 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(CurrencyEntity.class)
                 .addAnnotatedClass(StatusEventsEntity.class)
                 .addAnnotatedClass(PostBackEntity1.class)
+                .addAnnotatedClass(TrashStatusEntity.class)
+                .addAnnotatedClass(AdvRejectEntity.class)
                 .configure("/hibernate.cfg.xml");
         /*secondDbConfiguration  = new Configuration()
                 .addAnnotatedClass(PostBackEntity.class)
@@ -96,6 +101,63 @@ public class MySQLDaoImpl implements MySQLDao {
     public static SessionFactory getSecondDbSessionFactory() {
         return secondDbSessionFactory;
     }
+    public AdvRejectEntity getAdvReject(String name, String status) {
+        if (name == null || status == null) return null;
+        Session session = null;
+        AdvRejectEntity advRejectEntity;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                advRejectEntity = session.createQuery("from AdvRejectEntity where name=:name and status=:status", AdvRejectEntity.class)
+                        .setParameter("name", name)
+                        .setParameter("status", status)
+                        .getSingleResult();
+                break;
+            }
+            catch (NoResultException e) {
+                advRejectEntity = null;
+                break;
+            }
+            catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        session.close();
+        return advRejectEntity;
+    }
+    public TrashStatusEntity getTrashByStatus(String status) {
+        Session session = null;
+        TrashStatusEntity trashStatusEntity;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                trashStatusEntity = session.createQuery("from TrashStatusEntity where status=:status", TrashStatusEntity.class)
+                        .setParameter("status", status).getSingleResult();
+                break;
+            }
+            catch (NoResultException e) {
+                trashStatusEntity = null;
+                break;
+            }
+            catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        session.close();
+        return trashStatusEntity;
+    }
 
     public boolean isPostbackWithPrefixAndClickId(String prefix, String clickid) {
         Session session = null;
@@ -120,7 +182,94 @@ public class MySQLDaoImpl implements MySQLDao {
 
         }
     }
+    public boolean isPostback1InDb(PostBackEntity1 postBackEntity) {
+        Session session = null;
+        List<PostBackEntity1> postBackEntities = null;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                postBackEntities = session.createQuery("from PostBackEntity1 p where clickid=:clickid and date=:date and p.sum=:summ and prefix=:prefix and time=:time", PostBackEntity1.class)
+                        .setParameter("clickid", postBackEntity.getClickId())
+                        .setParameter("date", postBackEntity.getDate())
+                        .setParameter("summ", postBackEntity.getSum())
+                        .setParameter("prefix", postBackEntity.getPrefix())
+                        .setParameter("time", postBackEntity.getTime())
+                        .getResultList();
+                return !postBackEntities.isEmpty();
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
 
+        }
+    }
+    public boolean isPostbackErrorInDb(ErrorPostBackEntity postBackEntity) {
+        System.out.println(postBackEntity);
+        Session session = null;
+        List<ErrorPostBackEntity> postBackEntities = null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
+        dateFormat.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+        Date date = null;
+        try {
+             date = dateFormat.parse(dateFormat.format(new Date(postBackEntity.getDate().getTime())));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                postBackEntities = session.createQuery("from ErrorPostBackEntity p where clickid=:clickid and date=:date and p.sum=:summ and prefix=:prefix", ErrorPostBackEntity.class)
+                        .setParameter("clickid", postBackEntity.getClickId())
+                        .setParameter("date", date)
+                        .setParameter("summ", postBackEntity.getSum())
+                        .setParameter("prefix", postBackEntity.getPrefix())
+                        //.setParameter("time", new Time(date.getTime()))
+                        .getResultList();
+                System.out.println(postBackEntities);
+                return !postBackEntities.isEmpty();
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+        }
+    }
+    public boolean isPostbackInDb(PostBackEntity postBackEntity) {
+        Session session = null;
+        List<PostBackEntity> postBackEntities = null;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                postBackEntities = session.createQuery("from PostBackEntity p where clickid=:clickid and date=:date and p.sum=:summ and prefix=:prefix and time=:time", PostBackEntity.class)
+                        .setParameter("clickid", postBackEntity.getClickId())
+                        .setParameter("date", postBackEntity.getDate())
+                        .setParameter("summ", postBackEntity.getSum())
+                        .setParameter("prefix", postBackEntity.getPrefix())
+                        .setParameter("time", postBackEntity.getTime())
+                        .getResultList();
+                return !postBackEntities.isEmpty();
+            } catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+        }
+    }
     /**
      * Method gets event from db
      *

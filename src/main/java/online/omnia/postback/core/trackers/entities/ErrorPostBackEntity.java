@@ -9,4 +9,5 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "postback_incorrect")
 public class ErrorPostBackEntity extends AbstractPostBackEntity{
+
 }
