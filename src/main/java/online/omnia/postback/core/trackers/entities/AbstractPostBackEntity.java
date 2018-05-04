@@ -602,17 +602,17 @@ public abstract class AbstractPostBackEntity {
 
     @Override
     public String toString() {
-        return "PostBackEntity{" +
+        return "AbstractPostBackEntity{" +
                 "id=" + id +
                 ", date=" + date +
                 ", time=" + time +
-                ", prefix=" + prefix +
+                ", prefix='" + prefix + '\'' +
                 ", clickId='" + clickId + '\'' +
                 ", sum=" + sum +
                 ", currency='" + currency + '\'' +
-                ", goal=" + goal +
+                ", goal='" + goal + '\'' +
                 ", afid=" + afid +
-                ", status=" + status +
+                ", status='" + status + '\'' +
                 ", advName='" + advName + '\'' +
                 ", offerName='" + offerName + '\'' +
                 ", transactionId='" + transactionId + '\'' +
@@ -633,6 +633,33 @@ public abstract class AbstractPostBackEntity {
                 ", fullURL='" + fullURL + '\'' +
                 ", postbackSend=" + postbackSend +
                 ", offerId='" + offerId + '\'' +
+                ", duplicate='" + duplicate + '\'' +
+                ", event1='" + event1 + '\'' +
+                ", event2='" + event2 + '\'' +
+                ", event3='" + event3 + '\'' +
+                ", event4='" + event4 + '\'' +
+                ", event5='" + event5 + '\'' +
+                ", event6='" + event6 + '\'' +
+                ", event7='" + event7 + '\'' +
+                ", event8='" + event8 + '\'' +
+                ", event9='" + event9 + '\'' +
+                ", event10='" + event10 + '\'' +
+                ", actionId='" + actionId + '\'' +
+                ", addEvent1='" + addEvent1 + '\'' +
+                ", addEvent2='" + addEvent2 + '\'' +
+                ", addEvent3='" + addEvent3 + '\'' +
+                ", addEvent4='" + addEvent4 + '\'' +
+                ", addEvent5='" + addEvent5 + '\'' +
+                ", addEvent6='" + addEvent6 + '\'' +
+                ", addEvent7='" + addEvent7 + '\'' +
+                ", addEvent8='" + addEvent8 + '\'' +
+                ", addEvent9='" + addEvent9 + '\'' +
+                ", addEvent10='" + addEvent10 + '\'' +
+                ", exchange=" + exchange +
+                ", idc='" + idc + '\'' +
+                ", ido='" + ido + '\'' +
+                ", idcPrefix='" + idcPrefix + '\'' +
+                ", idoPrefix='" + idoPrefix + '\'' +
                 '}';
     }
 

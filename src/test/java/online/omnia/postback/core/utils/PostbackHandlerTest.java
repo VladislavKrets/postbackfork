@@ -26,7 +26,7 @@ public class PostbackHandlerTest {
         urls.add("http://127.0.0.1:8080/postback?clickid=12345&afid=2&sum=2.0&t1=101&offername=testName");
         urls.add("http://127.0.0.1:8080/postback?clickid=333_12345&afid=2&sum=string&t1=101&advname=testName");
         urls.add("http://127.0.0.1:8080/postback?clickid=&afid=string&sum=2.0&t1=101&advname=testName");
-
+        urls.add("http://127.0.0.1:8080/postback?cLiCkid=780_testId7&AFID=1&suM=10&t1=101&advname=test&stATUs=test");
 
     }
     @After
@@ -42,6 +42,11 @@ public class PostbackHandlerTest {
         assertEquals("2.0", map.get("sum"));
         assertEquals("101", map.get("t1"));
         assertEquals("testName", map.get("advname"));
+        map = postbackHandler.getPostbackParameters(urls.get(4));
+        assertEquals("780_testId7", map.get("clickid"));
+        assertEquals("1", map.get("afid"));
+        assertEquals("10", map.get("sum"));
+        assertEquals("test", map.get("status"));
         map = null;
     }
 

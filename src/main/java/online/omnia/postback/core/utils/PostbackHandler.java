@@ -39,9 +39,9 @@ public class PostbackHandler {
             String[] pair = parameters.split("=");
             if (pair.length == 0) return parametersMap;
             if (pair.length == 2) {
-                parametersMap.put(pair[0], pair[1]);
+                parametersMap.put(pair[0].toLowerCase(), pair[1]);
             } else if (pair.length == 1) {
-                parametersMap.put(pair[0], "");
+                parametersMap.put(pair[0].toLowerCase(), "");
             }
             return parametersMap;
         }
@@ -51,9 +51,9 @@ public class PostbackHandler {
         for (String keyValuePair : keyValuePairs) {
             pairs = keyValuePair.split("=");
             if (pairs.length == 2) {
-                parametersMap.put(pairs[0], pairs[1]);
+                parametersMap.put(pairs[0].toLowerCase(), pairs[1]);
             } else if (pairs.length == 1) {
-                parametersMap.put(pairs[0], "");
+                parametersMap.put(pairs[0].toLowerCase(), "");
             }
         }
         System.out.println("Parameters have been got");
@@ -90,6 +90,7 @@ public class PostbackHandler {
             String currency = URLDecoder.decode(parameters.get("currency"), "UTF-8");
             postBackEntity.setCurrency(currency.length() < 15 ? currency : currency.substring(0, 15));
         } else postBackEntity.setCurrency("USD");
+
         if (parameters.containsKey("goal")) {
             String goal = URLDecoder.decode(parameters.get("goal"), "UTF-8");
             postBackEntity.setGoal(goal.length() < 50 ? goal : goal.substring(0, 50));
@@ -192,7 +193,10 @@ public class PostbackHandler {
         if (parameters.containsKey("offerid"))
             postBackEntity.setOfferId(parameters.get("offerid").length() < 50 ? parameters.get("offerid") : parameters.get("offerid").substring(0, 50));
         if (parameters.containsKey("afid") && parameters.get("afid").matches("\\d+"))
-            postBackEntity.setAfid(Integer.parseInt(parameters.get("afid")));
+            if (postBackEntity.getAdvName() != null && postBackEntity.getAdvName().equalsIgnoreCase("profitsocial")) {
+            postBackEntity.setAfid(Integer.parseInt(parameters.get("afid").split("_")[0]));
+            }
+            else postBackEntity.setAfid(Integer.parseInt(parameters.get("afid")));
         if (parameters.containsKey("postbacksend") && parameters.get("postbacksend").matches("\\d+"))
             postBackEntity.setPostbackSend(Integer.parseInt(parameters.get("postback_send")));
         else postBackEntity.setPostbackSend(2);

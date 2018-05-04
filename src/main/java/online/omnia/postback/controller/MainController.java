@@ -5,6 +5,7 @@ import online.omnia.postback.core.exceptions.NoClickIdException;
 import online.omnia.postback.core.trackers.affise.AffiseTracker;
 import online.omnia.postback.core.trackers.binom.BinomTracker;
 import online.omnia.postback.core.trackers.entities.*;
+import online.omnia.postback.core.trackers.mytds.MytdsTracker;
 import online.omnia.postback.core.utils.FileWorkingUtils;
 import online.omnia.postback.core.utils.PostbackHandler;
 import org.apache.log4j.Logger;
@@ -63,17 +64,19 @@ public class MainController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        System.out.println(postBackEntity);
         System.out.println("Setting date and time");
         postBackEntity.setDate(new Date(currentDate.getTime()));
         postBackEntity.setTime(new Time(currentDate.getTime()));
         System.out.println("Setting url");
         postBackEntity.setFullURL(postbackURL);
         //postBackEntity.setIpAddress(ip);
-
+        System.out.println(postBackEntity);
         System.out.println(postBackEntity.getPrefix());
         if (postbackHandler.isEventFilled(postBackEntity)) {
             postBackEntity.setDuplicate("PARTIAL");
         }
+        System.out.println(postBackEntity);
         if (postBackEntity.getPrefix() == null) {
             System.out.println("No prefix or prefix is wrong");
             System.out.println("Writing to error_log");
@@ -88,6 +91,8 @@ public class MainController {
             System.out.println("Done");
             return "HTTP/1.1 200 OK\r\n";
         } else if (!checkDuplicates(postBackEntity)) {
+            System.out.println("CheckDuplicates");
+            System.out.println(postBackEntity);
             FileWorkingUtils.writePostback(new Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postbackURL);
             addingEventToPostback(postBackEntity);
@@ -134,8 +139,6 @@ public class MainController {
     public void binomHandler(PostBackEntity postBackEntity) {
         System.out.println("Creating affise tracker entity");
         System.out.println("Creating binom entity");
-        BinomTracker binomTracker = new BinomTracker(MySQLDaoImpl.getInstance()
-                .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
         try {
             PostBackEntity clone = postBackEntity.clone();
             setExchange(clone);
@@ -144,11 +147,28 @@ public class MainController {
             if (postBackEntity.getStatus() == null || MySQLDaoImpl.getInstance().getTrashByStatus(postBackEntity.getStatus()) == null) {
                 AdvRejectEntity advRejectEntity = MySQLDaoImpl.getInstance().getAdvReject(postBackEntity.getAdvName(), postBackEntity.getStatus());
                 if (advRejectEntity != null) clone.setStatus(advRejectEntity.getNewStatus());
-                String answer = binomTracker.sendPostback(clone);
-                System.out.println(answer.split(" ")[1]);
-                if (answer.split(" ")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
-                FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
-                        new Time(currentDate.getTime()), answer);
+                if (MySQLDaoImpl.getInstance().getStatusReject(postBackEntity.getAdvName(), postBackEntity.getStatus()) == null) {
+                    String answer = null;
+                    switch (postBackEntity.getPrefix()) {
+                        case "780" : {
+                            MytdsTracker mytdsTracker = new MytdsTracker(MySQLDaoImpl.getInstance()
+                                    .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
+
+                            answer = mytdsTracker.sendPostback(clone);
+                            break;
+                        }
+                        default: {
+                            BinomTracker binomTracker = new BinomTracker(MySQLDaoImpl.getInstance()
+                                    .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
+                            answer = binomTracker.sendPostback(clone);
+                            break;
+                        }
+                    }
+                    System.out.println(answer.split(" ")[1]);
+                    if (answer.split(" ")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
+                    FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
+                            new Time(currentDate.getTime()), answer);
+                }
             }
             else FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
                     new Time(currentDate.getTime()), postBackEntity.getFullURL());
@@ -403,11 +423,15 @@ public class MainController {
                 return true;
             }
         } else if (!postBackEntity.getClickId().isEmpty() && !postBackEntity.getStatus().isEmpty()) {
-            if (!postBackEntity.getStatus().isEmpty() && !MySQLDaoImpl.getInstance().isPostbackByClickidAndStatus(postBackEntity.getClickId(), postBackEntity.getStatus())) {
+            if (!postBackEntity.getStatus().isEmpty() && MySQLDaoImpl.getInstance().isPostbackByClickidAndStatus(postBackEntity.getClickId(), postBackEntity.getStatus())) {
+                System.out.println(postBackEntity);
+                System.out.println("FULL");
                 postBackEntity.setDuplicate("FULL");
                 return false;
             } else if (MySQLDaoImpl.getInstance().getPostbackByClickId(postBackEntity.getClickId()) != null) {
                 postBackEntity.setDuplicate("PARTIAL");
+                System.out.println(postBackEntity);
+                System.out.println("PARTIAL");
                 return true;
             }
 

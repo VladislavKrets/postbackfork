@@ -46,6 +46,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(PostBackEntity1.class)
                 .addAnnotatedClass(TrashStatusEntity.class)
                 .addAnnotatedClass(AdvRejectEntity.class)
+                .addAnnotatedClass(StatusRejectEntity.class)
                 .configure("/hibernate.cfg.xml");
         /*secondDbConfiguration  = new Configuration()
                 .addAnnotatedClass(PostBackEntity.class)
@@ -101,6 +102,38 @@ public class MySQLDaoImpl implements MySQLDao {
     public static SessionFactory getSecondDbSessionFactory() {
         return secondDbSessionFactory;
     }
+
+    public StatusRejectEntity getStatusReject(String adv, String status) {
+        if (adv == null || status == null) return null;
+        Session session = null;
+        StatusRejectEntity statusRejectEntity;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                statusRejectEntity = session.createQuery("from StatusRejectEntity where adv=:adv and status=:status", StatusRejectEntity.class)
+                        .setParameter("adv", adv)
+                        .setParameter("status", status)
+                        .getSingleResult();
+                break;
+            }
+            catch (NoResultException e) {
+                statusRejectEntity = null;
+                break;
+            }
+            catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        session.close();
+        return statusRejectEntity;
+    }
+
     public AdvRejectEntity getAdvReject(String name, String status) {
         if (name == null || status == null) return null;
         Session session = null;
@@ -131,6 +164,7 @@ public class MySQLDaoImpl implements MySQLDao {
         session.close();
         return advRejectEntity;
     }
+
     public TrashStatusEntity getTrashByStatus(String status) {
         Session session = null;
         TrashStatusEntity trashStatusEntity;
@@ -423,7 +457,7 @@ public class MySQLDaoImpl implements MySQLDao {
         while (true) {
             try {
                 session = masterDbSessionFactory.openSession();
-                currencyEntity = session.createQuery("from CurrencyEntity where code=:currency", CurrencyEntity.class)
+                currencyEntity = session.createQuery("from CurrencyEntity where code like :currency", CurrencyEntity.class)
                         .setParameter("currency", currency)
                         .getSingleResult();
                 break;
@@ -724,6 +758,7 @@ public class MySQLDaoImpl implements MySQLDao {
                         .setParameter("clickId", clickid)
                         .setParameter("status", status)
                         .getResultList();
+                System.out.println(postBackEntities);
                 return !postBackEntities.isEmpty();
             } catch (PersistenceException e) {
                 try {
