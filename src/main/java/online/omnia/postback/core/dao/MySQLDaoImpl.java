@@ -45,6 +45,7 @@ public class MySQLDaoImpl implements MySQLDao {
                 .addAnnotatedClass(StatusEventsEntity.class)
                 .addAnnotatedClass(PostBackEntity1.class)
                 .addAnnotatedClass(TrashStatusEntity.class)
+                .addAnnotatedClass(AdvStatusEntity.class)
                 .addAnnotatedClass(AdvRejectEntity.class)
                 .addAnnotatedClass(StatusRejectEntity.class)
                 .configure("/hibernate.cfg.xml");
@@ -101,6 +102,37 @@ public class MySQLDaoImpl implements MySQLDao {
 
     public static SessionFactory getSecondDbSessionFactory() {
         return secondDbSessionFactory;
+    }
+
+    public String get780Status(String status, String adv) {
+        if (status == null || adv == null) return null;
+        Session session = null;
+        String st;
+        while (true) {
+            try {
+                session = masterDbSessionFactory.openSession();
+                st = session.createQuery("select realStatus from AdvStatusEntity where name=:name and advId=(select id from AdvertsEntity where advShortName=:advname)", String.class)
+                        .setParameter("name", status)
+                        .setParameter("advname", adv)
+                        .getSingleResult();
+                break;
+            }
+            catch (NoResultException e) {
+                st = null;
+                break;
+            }
+            catch (PersistenceException e) {
+                try {
+                    System.out.println("Can't connect to db");
+                    System.out.println("Waiting for 30 seconds");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        session.close();
+        return st;
     }
 
     public StatusRejectEntity getStatusReject(String adv, String status) {

@@ -16,8 +16,14 @@ public class AdvertsEntity {
     private int id;
     @Column(name = "advname", length = 100)
     private String advName;
+    @Column(name = "advshortname")
+    private String advShortName;
     @Column(name = "secretkey")
     private String secretKey;
+
+    public String getAdvShortName() {
+        return advShortName;
+    }
 
     public int getId() {
         return id;

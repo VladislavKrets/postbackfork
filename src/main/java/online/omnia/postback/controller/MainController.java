@@ -153,8 +153,11 @@ public class MainController {
                         case "780" : {
                             MytdsTracker mytdsTracker = new MytdsTracker(MySQLDaoImpl.getInstance()
                                     .getTrackerByPrefix(postBackEntity.getPrefix()).getDomain() + "/");
-
-                            answer = mytdsTracker.sendPostback(clone);
+                            String stat = MySQLDaoImpl.getInstance().get780Status(clone.getStatus(), clone.getAdvName());
+                            clone.setStatus(stat);
+                            if (stat != null && stat.equals("approved")) {
+                                answer = mytdsTracker.sendPostback(clone);
+                            }
                             break;
                         }
                         default: {
@@ -164,10 +167,12 @@ public class MainController {
                             break;
                         }
                     }
-                    System.out.println(answer.split(" ")[1]);
-                    if (answer.split(" ")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
-                    FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
-                            new Time(currentDate.getTime()), answer);
+                    if (answer != null) {
+                        System.out.println(answer.split(" ")[1]);
+                        if (answer.split(" ")[1].equals("200")) postBackEntity.setPostbackSend(1); //if answer is ok
+                        FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),
+                                new Time(currentDate.getTime()), answer);
+                    }
                 }
             }
             else FileWorkingUtils.writePostback(new java.sql.Date(currentDate.getTime()),

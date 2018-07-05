@@ -17,7 +17,12 @@ public class MySQLDaoImplTest {
     public void initTest() {
         mySQLDao = MySQLDaoImpl.getInstance();
     }
+    @Test
+    public void get780StatusTest() {
+        String st = mySQLDao.get780Status("S_approved", "Clickdealer");
+        assertEquals("approved", st);
 
+    }
     @Test
     public void getCurrencyTest() {
         CurrencyEntity currencyEntity = mySQLDao.getCurrency("cad");
@@ -26,6 +31,7 @@ public class MySQLDaoImplTest {
     }
     @After
     public void afterTest() {
+        MySQLDaoImpl.getMasterDbSessionFactory().close();
         mySQLDao = null;
     }
 }
